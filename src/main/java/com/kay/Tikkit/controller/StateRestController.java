@@ -45,4 +45,11 @@ public class StateRestController {
         stateService.deleteState(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/by-country/{countryId}")
+    public ResponseEntity<List<StateDto>> getStatesByCountry(@PathVariable Long countryId) {
+        List<StateDto> states = stateService.getStatesByCountryId(countryId);
+        return ResponseEntity.ok(states);
+    }
+
 }

@@ -15,4 +15,5 @@ public interface StateRepository extends JpaRepository<State, Long> {
     List<State> findByIsActiveTrue();
     boolean existsByStateName(String stateName);
     boolean existsByCountry(Country country);
+	List<State> findByCountryCountryIdAndIsActiveTrue(Long countryId);
 }

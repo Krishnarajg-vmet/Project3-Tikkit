@@ -25,4 +25,6 @@ public interface DistrictRepository extends JpaRepository<District, Long> {
     boolean existsByDistrictName(String districtName);
 
     boolean existsByState(State state);
+
+	List<District> findByStateStateIdAndIsActiveTrue(Long stateId);
 }

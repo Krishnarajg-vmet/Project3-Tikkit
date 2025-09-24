@@ -45,4 +45,10 @@ public class CityRestController {
         cityService.deleteCity(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/by-district/{districtId}")
+    public ResponseEntity<List<CityDto>> getCityByDistrict(@PathVariable Long districtId) {
+    	List<CityDto> cities = cityService.getCityByDistrictId(districtId);
+    	return ResponseEntity.ok(cities);
+    }
 }

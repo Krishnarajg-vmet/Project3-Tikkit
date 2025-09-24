@@ -1,10 +1,247 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8" />
+  <title>Edit District - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      user-select: none;
+    }
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+    .form-label {
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+    .form-control, .form-select {
+      padding: 4px 6px;
+      font-size: 12px;
+      height: auto;
+    }
+    .form-section {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+   
+    .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+    .navbar-nav .nav-link {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+    .search-input {
+      width: 250px;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .mandatory::after {
+      content: "*";
+      color: red;
+      margin-left: 2px;
+    }
+  </style>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">B</button>
+  </div>
+</nav>
+
+<form id="districtForm" class="needs-validation" novalidate>
+  <div class="section-header">
+    <div>Edit District</div>
+    <div>
+      <button type="submit" class="btn btn-primary btn-sm">Update</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="goToGridView()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="container-fluid d-flex align-items-center">
+    <div class="col-md-6 form-section">
+        
+      <div class="row mb-2">
+        <label for="districtName" class="col-sm-2 col-form-label mandatory">District</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="districtName" required />
+          <div class="invalid-feedback">District Name is required.</div>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <label for="country" class="col-sm-2 col-form-label mandatory">Country</label>
+        <div class="col-sm-4">
+          <select id="country" class="form-select" required></select>
+          <div class="invalid-feedback">Country is required.</div>
+        </div>
+
+        <label for="state" class="col-sm-2 col-form-label mandatory">State</label>
+        <div class="col-sm-4">
+          <select id="state" class="form-select" required></select>
+          <div class="invalid-feedback">State is required.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+const form = document.getElementById('districtForm');
+const countrySelect = document.getElementById('country');
+const stateSelect = document.getElementById('state');
+const districtId = new URLSearchParams(window.location.search).get("id");
+
+// Load countries
+async function loadCountries(selectedCountryId) {
+  const res = await fetch('/api/countries');
+  const countries = await res.json();
+
+  countrySelect.innerHTML = '<option value="">Select Country</option>';
+  countries.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.countryId;
+    opt.textContent = c.countryName;
+    if (c.countryId == selectedCountryId) opt.selected = true;
+    countrySelect.appendChild(opt);
+  });
+}
+
+// Load states based on country
+async function loadStates(countryId, selectedStateId = null) {
+  stateSelect.innerHTML = '<option value="">Select State</option>';
+
+  if (!countryId) {
+    stateSelect.disabled = true;
+    return;
+  }
+
+  const res = await fetch(`/api/states/by-country/${countryId}`);
+  const states = await res.json();
+
+  if (states.length === 0) {
+    stateSelect.disabled = true;
+  } else {
+    stateSelect.disabled = false;
+    states.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.stateId;
+      opt.textContent = s.stateName;
+      if (s.stateId == selectedStateId) opt.selected = true;
+      stateSelect.appendChild(opt);
+    });
+  }
+}
+
+// Load existing district
+async function loadDistrict() {
+  const res = await fetch(`/api/districts/${districtId}`);
+  if (!res.ok) return alert("Failed to load district.");
+
+  const d = await res.json();
+  document.getElementById("districtName").value = d.districtName;
+
+  await loadCountries(d.countryId);
+  await loadStates(d.countryId, d.stateId);
+}
+
+// On country change, reload states and disable state select until loaded
+countrySelect.addEventListener('change', () => {
+  const countryId = countrySelect.value;
+  // Clear current state selection
+  stateSelect.innerHTML = '<option value="">-- Select State --</option>';
+  stateSelect.disabled = true;
+  loadStates(countryId); // No selected state on change
+});
+
+// Submit form
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  form.classList.add('was-validated');
+
+  const countryId = countrySelect.value;
+  const stateId = stateSelect.value;
+  const districtName = document.getElementById('districtName').value.trim();
+
+  if (!form.checkValidity()) return;
+
+  const data = {
+    districtId,
+    districtName,
+    stateId,
+    countryId,
+    isActive: true
+  };
+
+  try {
+    const res = await fetch(`/api/districts/${districtId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      alert('District updated successfully!');
+      goToGridView();
+    } else {
+      const err = await res.text();
+      alert(`Failed to update district: ${err}`);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Server error.');
+  }
+});
+
+function goToGridView() {
+  window.location.href = "/districts";
+}
+
+// Init
+loadDistrict();
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

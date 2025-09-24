@@ -34,7 +34,6 @@ public class DistrictMapper {
         if (dto == null) return null;
 
         District district = new District();
-        district.setDistrictId(dto.getDistrictId());
         district.setDistrictName(dto.getDistrictName());
         district.setIsActive(dto.getIsActive());
         district.setCreatedDt(dto.getCreatedDt());

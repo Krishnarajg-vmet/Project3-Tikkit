@@ -1,10 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8" />
+  <title>States List - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      user-select: none;
+    }
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      font-weight: bold;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    .search-input {
+      width: 250px;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .table th, .table td {
+      font-size: 12px;
+      vertical-align: middle;
+    }
+    .btn-action {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  </style>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">
+        B
+    </button>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="section-header">
+    <div>State List</div>
+    <div>
+      <button onclick="goToFormView()" class="btn btn-primary btn-sm">Add New State</button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>State Name</th>
+          <th>Country</th>
+          <th>Created</th>
+          <th>Modified</th>
+          <th>Status</th>
+          <th style="width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="stateTableBody">
+        <!-- Rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  async function fetchStates() {
+    try {
+      const response = await fetch('/api/states');
+      const states = await response.json();
+      const tableBody = document.getElementById('stateTableBody');
+      tableBody.innerHTML = '';
+
+      states.forEach(state => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${state.stateId}</td>
+          <td>${state.stateName}</td>
+          <td>${state.countryName || ''}</td>
+          <td>${state.createdDt?.replace("T", " ").split(".")[0] || ''}</td>
+          <td>${state.modifiedDt?.replace("T", " ").split(".")[0] || ''}</td>
+          <td>${state.isActive ? 'Active' : 'Inactive'}</td>
+          <td>
+            <button class="btn btn-sm btn-warning btn-action me-1" onclick="editState(${state.stateId})">Edit</button>
+            <button class="btn btn-sm btn-danger btn-action" onclick="deleteState(${state.stateId})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error("Failed to fetch states", error);
+      alert("Error loading state list.");
+    }
+  }
+
+  function goToFormView() {
+    window.location.href = "/create/states";
+  }
+
+  function editState(id) {
+    window.location.href = `/update/states?id=${id}`;
+  }
+
+  async function deleteState(id) {
+    if (confirm("Are you sure you want to deactivate this state?")) {
+      try {
+        const response = await fetch(`/api/states/delete/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert("State deleted successfully.");
+          fetchStates();
+        } else {
+          alert("Failed to delete state.");
+        }
+      } catch (error) {
+        console.error("Delete failed", error);
+        alert("Error deleting state.");
+      }
+    }
+  }
+
+  window.onload = fetchStates;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,10 +1,365 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8" />
+  <title>Create Area - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      user-select: none;
+    }
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+    .form-label {
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+    .form-control,
+    .form-select {
+      padding: 4px 6px;
+      font-size: 12px;
+      height: auto;
+    }
+    .form-section {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+   
+    .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+    .navbar-nav .nav-link {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+    .search-input {
+      width: 250px;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+
+    .btn-search, .btn-add {
+      padding: 4px 10px;
+      font-size: 12px;
+      align-items: center;
+      display: flex;
+      align-items: center;
+      background-color: gray;
+      color: white;
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 13px;
+      background: #f0f0f0;
+      padding: 4px 10px;
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 8px;
+    }
+    .row.g-1 > * {
+      padding-right: 6px;
+      padding-left: 6px;
+    }
+
+    .mandatory::after {
+      content: "*";
+      color: red;
+      margin-left: 2px;
+    }
+  </style>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">
+        B
+    </button>
+  </div>
+</nav>
+
+<form id="areaForm" class="needs-validation" novalidate>
+  <div class="section-header">
+    <div>Create Area</div>
+    <div>
+      <button type="submit" class="btn btn-primary btn-sm">Save</button>
+      <button type="reset" class="btn btn-secondary btn-sm">Clear</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="goToGridView()">Gridview</button>
+    </div>
+  </div>
+
+  <div class="container-fluid d-flex align-items-center">
+    
+    <div class="col-md-8 form-section">
+        <div class="row mb-2">
+        <label for="areaName" class="col-sm-2 col-form-label mandatory">Area Name</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="areaName" required />
+          <div class="invalid-feedback">Area name is required.</div>
+        </div>
+        <label for="pincode" class="col-sm-2 col-form-label mandatory">Pincode</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="pincode" required />
+          <div class="invalid-feedback">Pincode is required.</div>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <label for="country" class="col-sm-2 col-form-label mandatory">Country</label>
+        <div class="col-sm-4">
+          <select class="form-select" id="country" required>
+            <option value="">-- Select Country --</option>
+          </select>
+          <div class="invalid-feedback">Country required.</div>
+        </div>
+
+        <label for="state" class="col-sm-2 col-form-label mandatory">State</label>
+        <div class="col-sm-4">
+          <select class="form-select" id="state" required disabled>
+            <option value="">-- Select State --</option>
+          </select>
+          <div class="invalid-feedback">State required.</div>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <label for="district" class="col-sm-2 col-form-label mandatory">District</label>
+        <div class="col-sm-4">
+          <select class="form-select" id="district" required disabled>
+            <option value="">-- Select District --</option>
+          </select>
+          <div class="invalid-feedback">District required.</div>
+        </div>
+
+        <label for="city" class="col-sm-2 col-form-label mandatory">City</label>
+        <div class="col-sm-4">
+          <select class="form-select" id="city" required disabled>
+            <option value="">-- Select City --</option>
+          </select>
+          <div class="invalid-feedback">City required.</div>
+        </div>
+      </div>
+
+  </div>
+</form>
+
+<script>
+  async function loadCountries() {
+    const res = await fetch('/api/countries');
+    const countries = await res.json();
+    const countrySelect = document.getElementById('country');
+    countrySelect.innerHTML = '<option value="">-- Select Country --</option>';
+    countries.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.countryId;
+      opt.textContent = c.countryName;
+      countrySelect.appendChild(opt);
+    });
+    // On initial load, disable dependent selects
+    document.getElementById('state').disabled = true;
+    document.getElementById('district').disabled = true;
+    document.getElementById('city').disabled = true;
+  }
+
+  async function loadStates(countryId) {
+    const stateSel = document.getElementById('state');
+    const districtSel = document.getElementById('district');
+    const citySel = document.getElementById('city');
+
+    stateSel.innerHTML = '<option value="">-- Select State --</option>';
+    districtSel.innerHTML = '<option value="">-- Select District --</option>';
+    citySel.innerHTML = '<option value="">-- Select City --</option>';
+
+    districtSel.disabled = true;
+    citySel.disabled = true;
+
+    if (!countryId) {
+      stateSel.disabled = true;
+      return;
+    }
+
+    const res = await fetch(`/api/states/by-country/${countryId}`);
+    const states = await res.json();
+
+    if (states.length > 0) {
+      stateSel.disabled = false;
+      states.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.stateId;
+        opt.textContent = s.stateName;
+        stateSel.appendChild(opt);
+      });
+    } else {
+      stateSel.disabled = true;
+    }
+  }
+
+  async function loadDistricts(stateId) {
+    const districtSel = document.getElementById('district');
+    const citySel = document.getElementById('city');
+
+    districtSel.innerHTML = '<option value="">-- Select District --</option>';
+    citySel.innerHTML = '<option value="">-- Select City --</option>';
+
+    citySel.disabled = true;
+
+    if (!stateId) {
+      districtSel.disabled = true;
+      return;
+    }
+
+    const res = await fetch(`/api/districts/by-state/${stateId}`);
+    const districts = await res.json();
+
+    if (districts.length > 0) {
+      districtSel.disabled = false;
+      districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.districtId;
+        opt.textContent = d.districtName;
+        districtSel.appendChild(opt);
+      });
+    } else {
+      districtSel.disabled = true;
+    }
+  }
+
+  async function loadCities(districtId) {
+    const citySel = document.getElementById('city');
+    citySel.innerHTML = '<option value="">-- Select City --</option>';
+
+    if (!districtId) {
+      citySel.disabled = true;
+      return;
+    }
+
+    const res = await fetch(`/api/cities/by-district/${districtId}`);
+    const cities = await res.json();
+
+    if (cities.length > 0) {
+      citySel.disabled = false;
+      cities.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.cityId;
+        opt.textContent = c.cityName;
+        citySel.appendChild(opt);
+      });
+    } else {
+      citySel.disabled = true;
+    }
+  }
+
+  document.getElementById('country').addEventListener('change', function() {
+    const cid = this.value;
+    loadStates(cid);
+  });
+
+  document.getElementById('state').addEventListener('change', function() {
+    const sid = this.value;
+    loadDistricts(sid);
+  });
+
+  document.getElementById('district').addEventListener('change', function() {
+    const did = this.value;
+    loadCities(did);
+  });
+
+  document.getElementById('areaForm').addEventListener('submit', async function(evt) {
+    evt.preventDefault();
+    this.classList.add('was-validated');
+
+    const countryId = document.getElementById('country').value;
+    const stateId = document.getElementById('state').value;
+    const districtId = document.getElementById('district').value;
+    const cityId = document.getElementById('city').value;
+    const areaName = document.getElementById('areaName').value.trim();
+    const pincode = document.getElementById('pincode').value.trim();
+
+    if (!countryId || !stateId || !districtId || !cityId || !areaName || !pincode) return;
+
+    const body = {
+      countryId,
+      stateId,
+      districtId,
+      cityId,
+      areaName,
+      pincode,
+      isActive: true
+    };
+
+    try {
+      const res = await fetch('/api/areas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) {
+        alert('Area created successfully!');
+        this.reset();
+        this.classList.remove('was-validated');
+        // Disable dependent selects after reset
+        document.getElementById('state').disabled = true;
+        document.getElementById('district').disabled = true;
+        document.getElementById('city').disabled = true;
+      } else {
+        const err = await res.text();
+        alert('Error creating area: ' + err);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Server error occurred.');
+    }
+  });
+
+  function goToGridView() {
+    window.location.href = '/areas';
+  }
+
+  window.onload = () => {
+    loadCountries();
+  };
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

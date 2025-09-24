@@ -1,10 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8" />
+  <title>Edit State - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f5f5f5; font-size: 12px; }
+    .form-control, .form-select { padding: 4px 6px; font-size: 12px; height: auto; }
+    .form-section { background-color: #fff; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 10px; }
+    .section-header {
+      display: flex; justify-content: space-between;
+      background: #f0f0f0; padding: 6px 12px;
+      border: 1px solid #dee2e6; font-weight: bold; font-size: 13px; margin-bottom: 10px;
+    }
+    .mandatory::after { content: "*"; color: red; margin-left: 2px; }
+  </style>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+</nav>
+
+<form id="stateForm" class="needs-validation" novalidate>
+  <div class="section-header">
+    <div>State</div>
+    <div>
+      <button type="submit" class="btn btn-primary btn-sm">Update</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="goToGridView()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="container-fluid d-flex align-items-center">
+    <div class="col-md-6 form-section">
+      <div class="row mb-2">
+        <label for="stateName" class="col-sm-2 col-form-label mandatory">State Name</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="stateName" name="stateName" required />
+          <div class="invalid-feedback">State Name is required.</div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label for="country" class="col-sm-2 col-form-label mandatory">Country</label>
+        <div class="col-sm-4">
+          <select class="form-select" id="country" required></select>
+          <div class="invalid-feedback">Country is required.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('stateForm');
+  const stateId = new URLSearchParams(window.location.search).get("id");
+
+  async function loadStateData() {
+    try {
+      const [stateRes, countryRes] = await Promise.all([
+        fetch(`/api/states/${stateId}`),
+        fetch(`/api/countries`)
+      ]);
+
+      const state = await stateRes.json();
+      const countries = await countryRes.json();
+      const countrySelect = document.getElementById("country");
+
+      countries.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.countryId;
+        option.textContent = c.countryName;
+        if (state.country?.countryId === c.countryId) {
+          option.selected = true;
+        }
+        countrySelect.appendChild(option);
+      });
+
+      document.getElementById("stateName").value = state.stateName;
+    } catch (e) {
+      console.error(e);
+      alert("Failed to load state data.");
+    }
+  }
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    form.classList.add('was-validated');
+
+    const stateName = document.getElementById('stateName').value.trim();
+    const countryId = document.getElementById('country').value;
+
+    if (!stateName || !countryId || !form.checkValidity()) return;
+
+    const data = {
+      stateName,
+      countryId,
+      isActive: true
+    };
+
+    try {
+      const response = await fetch(`/api/states/update/${stateId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert("State updated successfully!");
+        window.location.href = "/states";
+      } else if (response.status === 409) {
+        alert("State already exists.");
+      } else {
+        const errorText = await response.text();
+        alert(`Update failed: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Update failed", error);
+      alert("Server error occurred.");
+    }
+  });
+
+  function goToGridView() {
+    window.location.href = "/states";
+  }
+
+  window.onload = loadStateData;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

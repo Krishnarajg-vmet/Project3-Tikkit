@@ -12,6 +12,8 @@ import com.kay.Tikkit.entity.*;
 import com.kay.Tikkit.mapper.*;
 import com.kay.Tikkit.repositories.*;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class DistrictService {
 
@@ -25,8 +27,11 @@ public class DistrictService {
     private StateRepository stateRepository;
 
     public DistrictDto createDistrict(DistrictDto dto) {
-        Country country = countryRepository.findById(dto.getCountryId()).orElseThrow();
-        State state = stateRepository.findById(dto.getStateId()).orElseThrow();
+    	       
+        State state = stateRepository.findById(dto.getStateId())
+            .orElseThrow(() -> new EntityNotFoundException("State not found"));
+        Country country = state.getCountry();
+        
         District district = DistrictMapper.toEntity(dto, country, state);
         district.setIsActive(true);
         return DistrictMapper.toDto(districtRepository.save(district));
@@ -62,6 +67,11 @@ public class DistrictService {
             d.setIsActive(false);
             districtRepository.save(d);
         });
+    }
+
+	public List<DistrictDto> getDistrictByStateId(Long stateId) {
+        List<District> district = districtRepository.findByStateStateIdAndIsActiveTrue(stateId);
+        return district.stream().map(DistrictMapper::toDto).collect(Collectors.toList());
     }
 }
 

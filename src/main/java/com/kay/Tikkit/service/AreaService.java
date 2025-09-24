@@ -19,22 +19,13 @@ public class AreaService {
     private AreaRepository areaRepository;
 
     @Autowired
-    private CountryRepository countryRepository;
-
-    @Autowired
-    private StateRepository stateRepository;
-
-    @Autowired
-    private DistrictRepository districtRepository;
-
-    @Autowired
     private CityRepository cityRepository;
 
     public AreaDto createArea(AreaDto dto) {
-        Country country = countryRepository.findById(dto.getCountryId()).orElseThrow();
-        State state = stateRepository.findById(dto.getStateId()).orElseThrow();
-        District district = districtRepository.findById(dto.getDistrictId()).orElseThrow();
         City city = cityRepository.findById(dto.getCityId()).orElseThrow();
+        District district = city.getDistrict();
+        Country country = city.getCountry();
+        State state = city.getState();
 
         Area area = AreaMapper.toEntity(dto, country, state, district, city);
         area.setIsActive(true);
@@ -58,10 +49,10 @@ public class AreaService {
 	public AreaDto updateArea(Long id, AreaDto dto) {
 		
 		return areaRepository.findById(id).map(existing->{
-			Country country = countryRepository.findById(dto.getCountryId()).orElseThrow();
-	        State state = stateRepository.findById(dto.getStateId()).orElseThrow();
-	        District district = districtRepository.findById(dto.getDistrictId()).orElseThrow();
 	        City city = cityRepository.findById(dto.getCityId()).orElseThrow();
+			District district = city.getDistrict();
+			Country country = city.getCountry();
+			State state = city.getState();
 	        existing.setAreaName(dto.getAreaName());
 	        existing.setPincode(dto.getPincode());
 	        existing.setCountry(country);

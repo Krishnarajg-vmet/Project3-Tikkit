@@ -28,9 +28,9 @@ public class CityService {
     private DistrictRepository districtRepository;
 
     public CityDto createCity(CityDto dto) {
-        Country country = countryRepository.findById(dto.getCountryId()).orElseThrow();
-        State state = stateRepository.findById(dto.getStateId()).orElseThrow();
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow();
+        Country country = district.getCountry();
+        State state = district.getState();
 
         City city = CityMapper.toEntity(dto, country, state, district);
         city.setIsActive(true);
@@ -54,9 +54,10 @@ public class CityService {
 	public CityDto updateCity(Long id, CityDto dto) {
 		
 		return cityRepository.findById(id).map(existing->{
-			Country country = countryRepository.findById(dto.getCountryId()).orElseThrow();
-	        State state = stateRepository.findById(dto.getStateId()).orElseThrow();
+
 	        District district = districtRepository.findById(dto.getDistrictId()).orElseThrow();
+			Country country = district.getCountry();
+	        State state = district.getState();
 	        existing.setCityName(dto.getCityName());
 	        existing.setCountry(country);
 	        existing.setState(state);
@@ -69,5 +70,10 @@ public class CityService {
 	public CityDto getbyId(Long id) {
 		Optional<City> optional = cityRepository.findById(id);
 		return optional.map(CityMapper::toDto).orElse(null);
+	}
+
+	public List<CityDto> getCityByDistrictId(Long districtId) {
+		List<City> cities = cityRepository.findByDistrictDistrictIdAndIsActiveTrue(districtId);
+		return cities.stream().map(CityMapper::toDto).collect(Collectors.toList());
 	}
 }

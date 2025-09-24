@@ -45,4 +45,10 @@ public class DistrictRestController {
         districtService.deleteDistrict(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/by-state/{stateId}")
+    public ResponseEntity<List<DistrictDto>> getDistrictByStates(@PathVariable Long stateId) {
+        List<DistrictDto> districts = districtService.getDistrictByStateId(stateId);
+        return ResponseEntity.ok(districts);
+    }
 }

@@ -1,10 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8" />
+  <title>Cities List - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      user-select: none;
+    }
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      font-weight: bold;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    .search-input {
+      width: 250px;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .table th, .table td {
+      font-size: 12px;
+      vertical-align: middle;
+    }
+    .btn-action {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  </style>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">
+        B
+    </button>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="section-header">
+    <div>City List</div>
+    <div>
+      <button onclick="goToFormView()" class="btn btn-primary btn-sm">Add New City</button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>City Name</th>
+          <th>District</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Status</th>
+          <th style="width:120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="cityTableBody">
+        <!-- Data rows here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  async function fetchCities() {
+    try {
+      const res = await fetch('/api/cities');
+      const list = await res.json();
+      const tbody = document.getElementById('cityTableBody');
+      tbody.innerHTML = '';
+      
+      list.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.cityId}</td>
+          <td>${c.cityName}</td>
+          <td>${c.districtName || ''}</td>
+          <td>${c.stateName || ''}</td>
+          <td>${c.countryName || ''}</td>
+          <td>${c.isActive ? 'Active' : 'Inactive'}</td>
+          <td>
+            <button class="btn btn-sm btn-warning btn-action me-1" onclick="editCity(${c.cityId})">Edit</button>
+            <button class="btn btn-sm btn-danger btn-action" onclick="deleteCity(${c.cityId})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error("Failed to fetch cities", err);
+      alert("Error loading city list.");
+    }
+  }
+
+  function goToFormView() {
+    window.location.href = '/create/cities';
+  }
+
+  function editCity(id) {
+    window.location.href = `/update/cities?id=${id}`;
+  }
+
+  async function deleteCity(id) {
+    if (confirm("Are you sure you want to deactivate this city?")) {
+      try {
+        const response = await fetch(`/api/cities/delete/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          alert("City deleted successfully.");
+          fetchCities();
+        } else {
+          alert("Failed to delete city.");
+        }
+      } catch (error) {
+        console.error("Delete failed", error);
+        alert("Error deleting city.");
+      }
+    }
+  }
+
+  window.onload = fetchCities;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

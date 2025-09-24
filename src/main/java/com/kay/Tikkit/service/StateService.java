@@ -56,6 +56,12 @@ public class StateService {
             stateRepository.save(state);
         });
     }
+    
+    public List<StateDto> getStatesByCountryId(Long countryId) {
+        List<State> states = stateRepository.findByCountryCountryIdAndIsActiveTrue(countryId);
+        return states.stream().map(StateMapper::toDto).collect(Collectors.toList());
+    }
+
 
 }
 
