@@ -80,5 +80,10 @@ public class ViewController {
 	public String areaUpdatePage() {
 		return "areas-update";
 	}
+	
+	@GetMapping("/view/companies")
+	public String companyPage() {
+		return "companies";
+	}
 
 }

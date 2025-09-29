@@ -11,7 +11,7 @@ import com.kay.Tikkit.entity.State;
 
 public interface CityRepository extends JpaRepository<City, Long> {
 
-    Optional<City> findByCityName(String cityName);
+	Optional<City> findByCityName(String cityName);
 
     List<City> findByDistrict(District district);
 
