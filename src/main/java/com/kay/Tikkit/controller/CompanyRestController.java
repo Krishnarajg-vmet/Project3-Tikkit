@@ -25,7 +25,6 @@ public class CompanyRestController {
 	
 	@PostMapping
 	public CompanyDto createCompany(@RequestBody CompanyDto dto) {
-		System.out.println("Incoming DTO: " + dto.toString());
 		return companyService.createCompany(dto);
 	}
 	
