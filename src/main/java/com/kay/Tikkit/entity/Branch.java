@@ -15,6 +15,9 @@ public class Branch {
 	@Column(name="branch_name", nullable = false, unique = true)
 	private String branchName;
 	
+	@Column(name="branch_code", nullable = false, unique = true)
+	private String branchCode;
+	
 	@ManyToOne
 	@JoinColumn(name="company_id", nullable = false)
 	private Company company;
@@ -46,6 +49,15 @@ public class Branch {
 
 	public void setBranchName(String branchName) {
 		this.branchName = branchName;
+	}
+
+	
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
 	}
 
 	public Company getCompany() {

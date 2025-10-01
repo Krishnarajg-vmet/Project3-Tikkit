@@ -6,6 +6,7 @@ public class BranchDto {
 	
 	private Long branchId;
 	private String branchName;
+	private String branchCode;
 	private Long companyId;
 	private String companyName;
 	private Long areaId;
@@ -30,6 +31,14 @@ public class BranchDto {
 	}
 	public void setBranchName(String branchName) {
 		this.branchName = branchName;
+		
+	}
+	
+	public String getBranchCode() {
+		return branchCode;
+	}
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
 	}
 	public Long getCompanyId() {
 		return companyId;

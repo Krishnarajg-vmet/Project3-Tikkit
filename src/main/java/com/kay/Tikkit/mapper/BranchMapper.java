@@ -13,6 +13,7 @@ public class BranchMapper {
 		BranchDto dto = new BranchDto();
 		dto.setBranchId(branch.getBranchId());
 		dto.setBranchName(branch.getBranchName());
+		dto.setBranchCode(branch.getBranchCode());
 		dto.setIsActive(branch.getIsActive());
 		dto.setCreatedDt(branch.getCreatedDt());
 		dto.setModifiedDt(branch.getModifiedDt());
@@ -56,6 +57,7 @@ public class BranchMapper {
 		}
 		
 		branch.setBranchName(dto.getBranchName());
+		branch.setBranchCode(dto.getBranchCode());
 		branch.setCompany(company);
 		branch.setArea(area);
 		branch.setIsActive(dto.getIsActive());

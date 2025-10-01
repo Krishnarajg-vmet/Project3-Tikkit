@@ -1,5 +1,6 @@
 package com.kay.Tikkit.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,12 +33,19 @@ public class BranchService {
 	
 	public BranchDto createBranch(BranchDto dto) {
 		
+		 if (dto.getCompanyId() == null) {
+		        throw new IllegalArgumentException("Company ID cannot be null");
+		    }
+		    if (dto.getAreaId() == null) {
+		        throw new IllegalArgumentException("Area ID cannot be null");
+		    }
+		
 		Company company = companyRepository.findById(dto.getCompanyId()).orElseThrow(() -> new EntityNotFoundException("Company Not Found"));
 		Area area = areaRepository.findById(dto.getAreaId()).orElseThrow(() -> new EntityNotFoundException("Area Not Found"));
 		
 		Branch branch = BranchMapper.toEntity(dto, company, area);
 		branch.setIsActive(true);
-		branch.setCreatedDt(null);
+		branch.setCreatedDt(LocalDateTime.now());
 		return BranchMapper.toDto(branchRepository.save(branch));
 	}
 	
@@ -54,7 +62,7 @@ public class BranchService {
 			existing.setArea(area);
 			existing.setBranchName(dto.getBranchName());
 			existing.setIsActive(dto.getIsActive());
-			existing.setModifiedDt(null);
+			existing.setModifiedDt(LocalDateTime.now());
 			return BranchMapper.toDto(branchRepository.save(existing));
 		}).orElse(null);
 	}

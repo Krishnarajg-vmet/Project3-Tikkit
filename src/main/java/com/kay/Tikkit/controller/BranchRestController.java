@@ -24,23 +24,23 @@ public class BranchRestController {
 	}
 	
 	@PostMapping
-	public BranchDto createBranch(BranchDto dto) {
+	public BranchDto createBranch(@RequestBody BranchDto dto) {
 		return branchService.createBranch(dto);
 	}
 	
-	@GetMapping("/id")
+	@GetMapping("/{id}")
 	public ResponseEntity<BranchDto> findById(@PathVariable Long id) {
 		BranchDto branch = branchService.getById(id);
 		return branch !=null ? ResponseEntity.ok(branch) : ResponseEntity.noContent().build();
 	}
 	
-	@PutMapping("/id")
+	@PutMapping("/{id}")
 	public ResponseEntity<BranchDto> updateBranch(@PathVariable Long id, @RequestBody BranchDto dto) {
 		BranchDto branch = branchService.updateBranch(id, dto);
 		return branch !=null ? ResponseEntity.ok(branch) : ResponseEntity.noContent().build();
 	}
 	
-	@DeleteMapping("/id")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteBranch(@PathVariable Long id) {
 		branchService.deleteBranch(id);
 		return ResponseEntity.noContent().build();

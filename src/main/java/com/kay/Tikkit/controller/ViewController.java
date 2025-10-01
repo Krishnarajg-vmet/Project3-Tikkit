@@ -85,5 +85,10 @@ public class ViewController {
 	public String companyPage() {
 		return "companies";
 	}
+	
+	@GetMapping("/view/branches")
+	public String branchpage() {
+		return "branches";
+	}
 
 }

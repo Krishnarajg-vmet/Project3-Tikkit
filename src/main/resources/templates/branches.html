@@ -150,19 +150,24 @@
 		  <button type="button" onclick="resetForm()" class="btn btn-secondary btn-sm flex-grow-1">Clear</button>
 	</div>
     </div>
-
-      <div class="mb-2">
+        <div class="row mb-2">
+      <div class="col-sm-6">
         <label for="branchName" class="form-label mandatory">Branch</label>
         <input type="text" class="form-control form-control-sm" id="branchName" name="branchName" required />
       </div>
-      <div class="row mb-2">
-        <div class="mb-2">
+      <div class="col-sm-6">
+        <label for="branchCode" class="form-label mandatory">Branch Code</label>
+        <input type="text" class="form-control form-control-sm" id="branchCode" name="branchCode" required />
+      </div>
+      </div>
+      <div class="mb-2">
         <label for="companyName" class="form-label mandatory">Company</label>
         <div class="input-group">
             <input type="text" class="form-control form-control-sm" id="companyName" name="companyName" readonly required />
             <button type="button" class="btn btn-primary btn-sm searchBtn" onclick="openCompanySearchModal('company')">S</button>
         </div>
       </div>
+      <div class="row mb-2">
       <div class="col-sm-6">
         <label for="areaName" class="form-label mandatory">Area</label>
         <div class="input-group">
@@ -262,6 +267,7 @@
             <tr>
               <th>ID</th>
               <th>Branch</th>
+              <th>Branch Code</th>
               <th>Company</th>
               <th>Area</th>
               <th>City</th>
@@ -378,6 +384,7 @@
 
 	  const data = {
 	    branchName: form.branchName.value.trim(),
+        branchCode: form.branchCode.value.trim(),
         companyId: parseInt(form.companyId.value) || 0,
 	    areaId: parseInt(form.areaId.value) || 0,
 	    isActive: form.isActive.checked
@@ -452,6 +459,7 @@
       tr.innerHTML = `
         <td>${branch.branchId}</td>
         <td>${branch.branchName}</td>
+        <td>${branch.branchCode || ''}</td>
         <td>${branch.companyName || ''}</td>
         <td>${branch.areaName || ''}</td>
         <td>${branch.cityName || ''}</td>
@@ -477,6 +485,7 @@
 
       form.dataset.branchId = branch.branchId;
       form.branchName.value = branch.branchName || '';
+      form.branchCode.value = branch.branchCode || '';
       form.companyId.value = branch.companyId || '';
       form.companyName.value = branch.companyName || '';
       form.areaId.value = branch.areaId || '';
