@@ -87,8 +87,23 @@ public class ViewController {
 	}
 	
 	@GetMapping("/view/branches")
-	public String branchpage() {
+	public String branchPage() {
 		return "branches";
+	}
+	
+	@GetMapping("/view/departments")
+	public String departmentPage() {
+		return "departments";
+	}
+	
+	@GetMapping("/view/designations")
+	public String designationPage() {
+		return "designations";
+	}
+	
+	@GetMapping("/view/employees")
+	public String employeePage() {
+		return "employees";
 	}
 
 }

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Designation - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      user-select: none;
+    }
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    .search-input {
+      width: 100%;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .table th, .table td {
+      font-size: 12px;
+      vertical-align: middle;
+    }
+    .btn-action {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+    /* Layout */
+    .container {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .left-pane {
+      flex: 1;
+      background: white;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      min-width: 420px;
+      max-width: 500px;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+    .right-pane {
+      flex: 2.5;
+      background: white;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      height: calc(100vh - 110px);
+      display: flex;
+      flex-direction: column;
+    }
+    .table-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .table-responsive {
+      flex-grow: 1;
+      overflow: auto;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      font-size: 11px;
+      user-select: none;
+      /* optional: add a subtle shadow */
+      box-shadow: 0 -1px 4px rgba(0,0,0,0.05);
+      z-index: 1000;
+    }
+
+    .form-control, .form-select {
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .mandatory::after {
+      content: "*";
+      color: red;
+      margin-left: 2px;
+    }
+    #branchSearchModal .modal-dialog {
+    max-width: 800px;
+    margin: auto;
+}
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">
+        B
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+  
+  <form id="designationForm" class="needs-validation" novalidate> <!-- Left pane: Creation/Update form -->
+  <div class="left-pane">
+    <div class="section-header">
+      <div>Designation</div>
+      <div class="d-flex gap-2">
+		  <button type="submit" id="btnSave" class="btn btn-success btn-sm flex-grow-1">Save</button>
+		  <button type="button" id="btnUpdate" class="btn btn-primary btn-sm flex-grow-1" style="display: none;" onclick="updateDesignation()">Update</button>
+		  <button type="button" onclick="resetForm()" class="btn btn-secondary btn-sm flex-grow-1">Clear</button>
+	</div>
+    </div>
+        <div class="row mb-2">
+      <div class="col-sm-8">
+        <label for="designationName" class="form-label mandatory">Designation</label>
+        <input type="text" class="form-control form-control-sm" id="designationName" name="designationName" required />
+      </div>
+      </div>
+      <div class="mb-3">
+        <label for="isActive" class="form-check-label me-2">
+          <!-- Enabled checkbox so the user can change it -->
+          <input type="checkbox" class="form-check-input" id="isActive" name="isActive" checked />
+          Active
+        </label>
+      </div>
+      <div class="d-flex justify-content-end align-items-center">
+          <span class="text-danger me-2">* Indicates Mandatory Fields</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Right pane: Company list with search and manipulation -->
+  <div class="right-pane">
+    <div class="table-section">
+      <div class="section-header d-flex justify-content-between align-items-center">
+        <div>Designation List</div>
+        <div>
+          <button id="btnGetData" class="btn btn-sm btn-primary">Get Data</button>
+        </div>
+      </div>
+
+      <!-- Search inputs -->
+      <div class="p-2 border-bottom bg-light">
+        <div class="row g-2">
+          <div class="col">
+            <input type="text" id="searchDesignation" class="form-control form-control-sm" placeholder="Search designation" />
+          </div>
+          <div class="col">
+            <input type="text" id="searchIsActive" class="form-control form-control-sm" placeholder="Search Active (A/I)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive flex-grow-1">
+        <table class="table table-bordered table-striped table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Designation</th>
+              <th>Status</th>
+              <th style="width: 120px;">Manipulation</th>
+            </tr>
+          </thead>
+          <tbody id="designationTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer bg-white border-top text-center p-1">
+  Tikkit - Company - v1.0.0 - ©2023
+</footer>
+
+<script>
+  const form = document.getElementById('designationForm');
+  const tbody = document.getElementById('designationTableBody');
+  let designations = [];
+
+  // When form is submitted
+  form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+	  if (!form.checkValidity()) {
+	    form.classList.add('was-validated');
+	    return;
+	  }
+	
+	  // Create mode (Save)
+	  const data = getFormData(); // Move logic to separate function (below)
+	  try {
+	    const res = await fetch('/api/designations', {
+	      method: 'POST',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify(data)
+	    });
+	    if (!res.ok) throw new Error('Failed to save designation');
+	    alert('Designation saved successfully');
+	    resetForm();
+	    fetchDesignation();
+	  } catch (err) {
+	    alert(err.message);
+	  }
+	});
+  
+  function getFormData() {
+  const rawId = parseInt(form.dataset.designationId || '0');
+  const isNew = isNaN(rawId) || rawId <= 0;
+
+  const data = {
+    designationName: form.designationName.value.trim(),
+    isActive: form.isActive.checked
+  };
+
+  if (!isNew) {
+    data.designationId = rawId;
+  }
+
+  return data;
+}
+
+  function resetForm() {
+  form.reset();
+  form.classList.remove('was-validated');
+
+  // Clear hidden fields
+  form.dataset.designationId = '';
+  form.designationName.value = '';
+  form.isActive.checked = true;
+
+  // Show Save, hide Update
+  document.getElementById('btnSave').style.display = 'inline-block';
+  document.getElementById('btnUpdate').style.display = 'none';
+}
+
+
+  // Fetch and display companies in the table with filters
+  async function fetchDesignation() {
+    const searchParams = new URLSearchParams();
+    if (document.getElementById('searchDesignation').value.trim()) searchParams.append('designationName', document.getElementById('searchDesignation').value.trim());
+    
+    const isActiveVal = document.getElementById('searchIsActive').value.trim().toUpperCase();
+    if (isActiveVal === 'A') searchParams.append('isActive', 'true');
+    else if (isActiveVal === 'I') searchParams.append('isActive', 'false');
+
+    try {
+      const res = await fetch('/api/designations?' + searchParams.toString());
+      if (!res.ok) throw new Error('Failed to fetch designations');
+      designations = await res.json();
+      renderDesignation();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  // Render company rows in the table
+  function renderDesignation() {
+    tbody.innerHTML = '';
+    if (!Array.isArray(designations)) return;
+
+    designations.forEach(designation => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${designation.designationId}</td>
+        <td>${designation.designationName}</td>
+        <td>${designation.isActive ? 'Active' : 'Inactive'}</td>
+        <td>
+          <button class="btn btn-sm btn-info btn-action" onclick="editDesignation(${designation.designationId})">E</button>
+          <button class="btn btn-sm btn-warning btn-action" onclick="toggleActive(${designation.designationId}, ${designation.isActive})">${designation.isActive ? 'I' : 'A'}</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Edit a company - load its data into form
+  async function editDesignation(id) {
+    try {
+      const res = await fetch(`/api/designations/${id}`);
+      if (!res.ok) throw new Error('Designation not found');
+      const designation = await res.json();
+        form.dataset.designationId = designation.designationId;
+        form.designationName.value = designation.designationName || '';
+        form.isActive.checked = designation.isActive;
+      form.classList.remove('was-validated');
+      document.getElementById('btnSave').style.display = 'none';
+      document.getElementById('btnUpdate').style.display = 'inline-block';
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function updateDesignation() {
+	  if (!form.checkValidity()) {
+	    form.classList.add('was-validated');
+	    return;
+	  }
+
+	  const data = getFormData();
+	  const designationId = parseInt(form.dataset.designationId || 0);
+	  if (!designationId) {
+	    alert("Invalid Designation ID for update.");
+	    return;
+	  }
+	  data.designationId = designationId;
+
+	  try {
+	    const res = await fetch(`/api/designations/${designationId}`, {
+	      method: 'PUT',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify(data)
+	    });
+
+	    if (!res.ok) throw new Error('Failed to update Designation');
+	    alert('Designation updated successfully');
+	    resetForm();
+	    fetchDesignation();
+	  } catch (err) {
+	    alert(err.message);
+	  }
+	}
+
+  
+  // Toggle company active state
+  async function toggleActive(id, currentStatus) {
+    if (!confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this Designation?`)) return;
+
+    try {
+      // For toggling, fetch company, update isActive, and save
+      const resGet = await fetch(`/api/designations/${id}`);
+      if (!resGet.ok) throw new Error('Designation not found');
+      const designation = await resGet.json();
+      designation.isActive = !currentStatus;
+
+      const resPut = await fetch(`/api/designations/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(designation)
+      });
+
+      if (!resPut.ok) throw new Error('Failed to update designation status');
+      alert(`Designation ${designation.isActive ? 'activated' : 'deactivated'} successfully`);
+      fetchDesignation();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  // Setup event listeners for search inputs and buttons
+  document.getElementById('btnGetData').addEventListener('click', fetchDesignation);
+  // Trigger fetch initially to load data
+  fetchDesignation();
+
+  // Clear form on page load
+  resetForm();
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

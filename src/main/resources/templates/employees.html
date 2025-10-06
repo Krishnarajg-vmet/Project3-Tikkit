@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Employee - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+        user-select: none;
+        --background-color-primary:#f5f5f5;
+        --background-color-secondary: #fff;
+        --background-color-header: #e9ecef;
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --background-color-button: #007bff;
+    }
+    body {
+      background-color:var(--background-color-primary);
+      font-size: 12px;
+    }
+    .form-label {
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+    .form-control,
+    .form-select {
+      padding: 4px 6px;
+      font-size: 12px;
+      height: auto;
+    }
+    .form-section {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--background-color-header);
+      padding: 6px 12px;
+      border: 1px solid var(--background-color-header);
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow);
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+    .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+    .navbar-nav .nav-link {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+    .search-input {
+      width: 250px;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+
+    .btn-search, .btn-add {
+      padding: 4px 10px;
+      font-size: 12px;
+      align-items: center;
+      display: flex;
+      align-items: center;
+      background-color: var(--background-color-button);
+      color: white;
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 13px;
+      background: #f0f0f0;
+      padding: 4px 10px;
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 8px;
+    }
+    .row.g-1 > * {
+      padding-right: 6px;
+      padding-left: 6px;
+    }
+
+    .mandatory::after {
+      content: "*";
+      color: red;
+      margin-left: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+    <span>Tikkit</span>
+  </a>
+
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+    </li>
+    <li class="nav-item ms-3">
+      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+    </li>
+  </ul>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" title="Settings">
+        B
+    </button>
+  </div>
+</nav>
+<form id="employeeForm" class="needs-validation" novalidate method="post">
+<div class="section-header">
+  <div>Employee</div>
+  <div>
+    <button class="btn btn-primary btn-sm" type="submit">Save</button>
+    <button class="btn btn-primary btn-sm" type="reset">Clear</button>
+    <button class="btn btn-primary btn-sm">Gridview</button>
+  </div>
+</div>
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-section">
+        <div class="section-title">Personal Details</div>
+      <div class="form-section">
+        <div class="row g-1">
+          <div class="col-md-3">
+            <label class="form-label mandatory" for="title">Title</label>
+            <select class="form-select" id="title" name="title" required>
+              <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Title is required.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mandatory" for="firstName">First Name</label>
+            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" required>
+            <div class="invalid-feedback">Firstname is required.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mandatory" for="lastname">Last Name</label>
+            <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" required>
+            <div class="invalid-feedback">Lastname is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="dob">DOB</label>
+            <input type="date" class="form-control" id="dob" name="dob" required>
+            <div class="invalid-feedback">Date of Birth is required.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label mandatory" for="gender">Gender</label>
+            <select class="form-select" id="gender" name="gender" required>
+              <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Gender is required.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label mandatory" for="age">Age</label>
+            <input type="number" class="form-control" placeholder="Yrs" id="age" name="age" required>
+            <div class="invalid-feedback">Age is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="maritalStatus">Marital Status</label>
+            <select class="form-select" id="maritalStatus" name="maritalStatus" required>
+              <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Marital Status is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="nationality">Nationality</label>
+            <input type="text" class="form-control" value="Indian" id="nationality" name="nationality" required>
+            <div class="invalid-feedback">Nationality is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="bloodGroup">Blood Group</label>
+            <select class="form-select" id="bloodGroup" name="bloodGroup">
+                <option value="">--Select--</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-section">
+        <div class="section-title">Employment Details</div>
+            <div class="form-section">
+              <div class="row g-1">
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="employeeType">Emp Type</label>
+            <select class="form-select" id="employeeType" name="employeeType" required>
+                <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Employee Type is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="employeeCategory">Emp Category</label>
+            <select class="form-select" id="employeeCategory" name="employeeCategory" required>
+                <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Employee Category is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="location">Location</label>
+            <select class="form-select" id="branch" name="branch" required>
+                <option value="">--Select--</option>
+            </select>
+            <div class="invalid-feedback">Location is required.</div>
+          </div>
+          <input type="hidden" id="branchId" name="branchId" />
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="employeeCode">Emp Code</label>
+            <input type="text" class="form-control" value="EMP615" name="employeeCode" id="employeeCode" required>
+            <div class="invalid-feedback">Employee Code is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="joiningDate">Joining Date</label>
+            <input type="date" class="form-control" id="joiningDate" name="joiningDate" required>
+            <div class="invalid-feedback">Joining Date is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mandatory" for="designation">Designation</label>
+            <div class="input-group">
+                <div class="input-group">
+                  <button class="btn btn-outline-secondary btn-add" type="button" id="btn-add-designation" title="Add Designation">+</button>
+                  <input type="text" class="form-control" placeholder="Search Designation" id="designation" name="designation" required>
+                  <button class="btn btn-outline-secondary btn-search" type="button" title="Search Designation" onclick="openModal('designation')">🔍</button>
+                  <input type="hidden" id="designationId" name="designationId">
+                </div>
+                <div class="invalid-feedback">Designation is required.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label mandatory" for="department">Department</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary btn-add" type="button" id="btn-add-department" title="Add Department">+</button>
+
+              <input type="text" class="form-control" placeholder="Search Department" id="department" name="department" required>
+              <button class="btn btn-outline-secondary btn-search" type="button" title="Search Department" onclick="openModal('department')">🔍</button>
+              <input type="hidden" id="departmentId" name="departmentId">
+              <div class="invalid-feedback">Department Name is required.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="qualification">Qualification</label>
+            <input type="text" class="form-control" id="qualification" name="qualification">
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-section">
+        <div class="section-title">Address</div>
+      <div class="form-section">
+        <div class="row g-1">
+          <div class="col-12">
+            <input type="text" class="form-control" id="address1" name="address1" placeholder="Address Line 1" required>
+            <div class="invalid-feedback">Address is required.</div>
+          </div>
+          <div class="col-12">
+            <input type="text" class="form-control" id="address2" name="address2" placeholder="Address Line 2">
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="area" name="area" placeholder="Search Area" required readonly>
+              <button class="btn btn-outline-secondary btn-search" type="button" title="Search Area" onclick="openModal('area')">🔍</button>
+              <input type="hidden" id="areaId" name="areaId">
+              <div class="invalid-feedback">Area Name is required.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Search Pincode" required readonly>
+              <button class="btn btn-outline-secondary btn-search" type="button" title="Search Pincode" onclick="openModal('pincode')">🔍</button>
+              <div class="invalid-feedback">Pincode is required.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="city" name="city" placeholder="City" readonly required>
+              <input type="hidden" id="cityId" name="cityId">
+              <div class="invalid-feedback">City Name is required.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="district" name="district" placeholder="District" readonly required>
+              <input type="hidden" id="districtId" name="districtId">
+              <div class="invalid-feedback">District Name is required.</div>
+            </div>
+
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <input 
+                type="text" class="form-control" id="state" name="state" placeholder="State" readonly required>
+                <input type="hidden" id="stateId" name="stateId">
+              <div class="invalid-feedback">State Name is required.</div>
+            </div>
+
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Country" value="India" readonly disabled>
+            <input type="hidden" id="countryId" name="countryId">
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-section">
+        <div class="section-title">Contact Details</div>
+      <div class="form-section">
+         <div class="row g-1">
+          <div class="col-12">
+            <label class="form-label mandatory" for="mobileone">Mobile #1</label>
+            <input type="text" class="form-control" placeholder="+91" id="mobileNumber" name="mobileNumber" required>
+            <div class="invalid-feedback">Mobile Number is required.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="mobiletwo">Mobile #2</label>
+            <input type="text" class="form-control" placeholder="+91" id="alternateNumber" name="alternateNumber">
+          </div>
+          <div class="col-12">
+            <label class="form-label mandatory" for="email">Email</label>
+            <input type="email" class="form-control" placeholder="@gmail.com" id="email" name="email" required>
+            <div class="invalid-feedback">Email ID is required.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="moc">Mode of Communication</label>
+            <select class="form-select"><option>Mode of Communication</option></select>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    
+    <input type="hidden" id="cityId" name="cityId">
+	<input type="hidden" id="districtId" name="districtId">
+	<input type="hidden" id="stateId" name="stateId">
+	<input type="hidden" id="countryId" name="countryId">
+    <div class="col-md-4">
+      <div class="form-section">
+        <div class="section-title">Reporting Details</div>
+      <div class="form-section">
+        <div class="row g-1">
+          <div class="col-12">
+            <label class="form-label" for="reportingto">Reporting To</label>
+            <input type="text" class="form-control" placeholder="Staff Name" id="reportingTo" name="reportingTo">
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="reportingdepartment">Reporting Department</label>
+            <input type="text" class="form-control" placeholder="Department" id="reportingDepartment" name="reportingDepartment">
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="reportingdesignation">Reporting Designation</label>
+            <input type="text" class="form-control" placeholder="Designation" id="reportingDesignation" name="reportingDesignation">
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="resignationdate">Resignation Date</label>
+            <input type="date" class="form-control" placeholder="Resignation Date" id="resignationDate" name="resignationDate">
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+<div class="d-flex justify-content-end align-items-center">
+      <span class="text-danger me-2">* Indicates Mandatory Fields</span>
+</div>
+<!-- Generic Search Modal -->
+<div class="modal fade" id="entitySearchModal" tabindex="-1" aria-labelledby="entitySearchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="entitySearchModalLabel">Search</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="entitySearchInput" class="form-control mb-3" placeholder="Search..." oninput="filterEntities()" />
+        <table class="table table-hover">
+          <thead>
+            <tr id="entityTableHeaders">
+              <!-- Populated dynamically -->
+            </tr>
+          </thead>
+          <tbody id="entityModalTableBody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</form>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const lookupModal = new bootstrap.Modal(document.getElementById('entitySearchModal'));
+  const lookupTableBody = document.getElementById('entityModalTableBody');
+  const lookupSearchInput = document.getElementById('entitySearchInput');
+  let currentLookupType = null;
+
+  // Enum selects
+  const enumSelects = [
+    { id: 'title', api: '/api/enums/title' },
+    { id: 'maritalStatus', api: '/api/enums/maritalStatus' },
+    { id: 'gender', api: '/api/enums/gender' },
+    { id: 'bloodGroup', api: '/api/enums/bloodGroup' },
+    { id: 'employeeType', api: '/api/enums/employeeType' },
+    { id: 'employeeCategory', api: '/api/enums/employeeCategory' },
+    { id: 'departmentType', api: '/api/enums/departmentType' },
+    { id: 'branch', api: '/api/branches' }
+  ];
+
+  enumSelects.forEach(({ id, api }) => {
+    const select = document.getElementById(id);
+    if (select) {
+      select.innerHTML = '<option value="">-- Select --</option>';
+      fetch(api)
+        .then(res => res.ok ? res.json() : Promise.reject(`Failed to load ${id}`))
+        .then(data => {
+          data.forEach(item => {
+            const option = document.createElement('option');
+            if (id === 'branch') {
+              option.value = item.branchId || item.id || '';
+              option.textContent = item.branchName || item.name || '';
+            } else {
+              option.value = item.name || '';
+              option.textContent = item.label || item.name || '';
+            }
+            select.appendChild(option);
+          });
+        })
+        
+        .catch(err => console.error(err));
+    }
+  });
+  
+  document.getElementById('branch').addEventListener('change', function() {
+	  document.getElementById('branchId').value = this.value;
+	});
+
+
+  // Modal open function
+  window.openModal = function(type) {
+    if (['designation', 'department', 'area', 'pincode'].includes(type)) {
+      currentLookupType = type;
+      document.getElementById('entitySearchModalLabel').textContent =
+        `Select ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+      lookupSearchInput.value = '';
+      loadLookupData(type, '');
+      lookupModal.show();
+    } else {
+      console.warn(`Lookup modal not supported for type: ${type}`);
+    }
+  };
+
+  // Load lookup data
+  function loadLookupData(type, filter) {
+    fetch(`/api/${type}s?search=${encodeURIComponent(filter)}`)
+      .then(res => res.ok ? res.json() : Promise.reject('Failed to fetch'))
+      .then(items => {
+        lookupTableBody.innerHTML = '';
+        if (!Array.isArray(items) || items.length === 0) {
+          lookupTableBody.innerHTML = '<tr><td colspan="2">No data available</td></tr>';
+          return;
+        }
+
+        items.forEach((item, idx) => {
+          const tr = document.createElement('tr');
+          let displayName = item.name;
+          let itemId = item.id;
+
+          if (type === 'department') {
+            displayName = item.departmentName;
+            itemId = item.departmentId;
+          } else if (type === 'designation') {
+            displayName = item.designationName;
+            itemId = item.designationId;
+          } else if (type === 'area') {
+            displayName = item.areaName;
+            itemId = item.areaId;
+          } else if (type === 'pincode') {
+            displayName = item.pincode;
+          }
+
+          tr.innerHTML = `<td>${idx + 1}</td><td>${displayName || 'N/A'}</td>`;
+          tr.style.cursor = 'pointer';
+
+          tr.addEventListener('click', () => {
+            const inputField = document.getElementById(type);
+            if (inputField) inputField.value = displayName;
+
+            const hiddenIdField = document.getElementById(`${type}Id`);
+            if (hiddenIdField) hiddenIdField.value = itemId;
+
+            lookupModal.hide();
+
+            // Auto-fill location fields when area is selected
+            if (type === 'area' && item.areaId) {
+              fetch(`/api/areas/${item.areaId}`)
+                .then(res => res.json())
+                .then(loc => {
+                  document.getElementById('pincode').value = loc.pincode || '';
+                  document.getElementById('city').value = loc.cityName || '';
+                  document.getElementById('district').value = loc.districtName || '';
+                  document.getElementById('state').value = loc.stateName || '';
+
+                  // Set hidden IDs
+                  if (document.getElementById('cityId')) {
+                    document.getElementById('cityId').value = loc.cityId || '';
+                  }
+                  if (document.getElementById('districtId')) {
+                    document.getElementById('districtId').value = loc.districtId || '';
+                  }
+                  if (document.getElementById('stateId')) {
+                    document.getElementById('stateId').value = loc.stateId || '';
+                  }
+                  if (document.getElementById('countryId')) {
+                    document.getElementById('countryId').value = loc.countryId || '';
+                  }
+                })
+                .catch(() => console.warn("Location lookup failed."));
+            }
+          });
+
+          lookupTableBody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        lookupTableBody.innerHTML = '<tr><td colspan="2">Error loading data</td></tr>';
+      });
+  }
+
+  lookupSearchInput.addEventListener('input', () => {
+    if (currentLookupType) {
+      loadLookupData(currentLookupType, lookupSearchInput.value);
+    }
+  });
+
+  // Placeholder add buttons
+  document.getElementById('btn-add-designation').addEventListener('click', () => {
+    alert('Add Designation feature coming soon!');
+  });
+
+  document.getElementById('btn-add-department').addEventListener('click', () => {
+    alert('Add Department feature coming soon!');
+  });
+});
+
+// Calculate age
+document.getElementById('dob').addEventListener('change', () => {
+  const dobInput = document.getElementById('dob');
+  const ageInput = document.getElementById('age');
+  const dobValue = dobInput.value;
+  if (dobValue) {
+    const dobDate = new Date(dobValue);
+    const today = new Date();
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const m = today.getMonth() - dobDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+      age--;
+    }
+    ageInput.value = age >= 0 ? age : '';
+  } else {
+    ageInput.value = '';
+  }
+});
+
+// Form submission
+document.getElementById('employeeForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const form = this;
+
+  if (!form.checkValidity()) {
+    form.classList.add('was-validated');
+    return;
+  }
+
+  const formData = new FormData(form);
+  const jsonData = {};
+  const numberFields = [
+    'age', 'branch', 'designationId', 'departmentId', 'areaId',
+    'cityId', 'districtId', 'stateId', 'countryId'
+  ];
+
+  formData.forEach((value, key) => {
+    if (numberFields.includes(key)) {
+      if (value !== '') {
+        jsonData[key] = Number(value);
+      }
+    } else {
+      if (value !== '') {
+        jsonData[key] = value;
+      }
+    }
+  });
+
+  // Clean null or empty fields
+  Object.keys(jsonData).forEach(key => {
+    if (jsonData[key] === null || jsonData[key] === '') {
+      delete jsonData[key];
+    }
+  });
+
+  fetch('/api/employees', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(jsonData)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to save employee.");
+      return res.json();
+    })
+    .then(data => {
+      alert('Employee saved successfully!');
+      form.reset();
+      form.classList.remove('was-validated');
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Error saving employee.');
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
