@@ -105,5 +105,10 @@ public class ViewController {
 	public String employeePage() {
 		return "employees";
 	}
+	
+	@GetMapping("/employees")
+	public String employeeListPage() {
+		return "employees-list";
+	}
 
 }

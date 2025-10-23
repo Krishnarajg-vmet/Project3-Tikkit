@@ -1,6 +1,8 @@
 package com.kay.Tikkit.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.kay.Tikkit.enums.DepartmentType;
 
@@ -36,6 +38,9 @@ public class Department {
 	
 	@Column(name="modified_dt")
 	private LocalDateTime modifiedDt;
+	
+	@OneToMany(mappedBy = "department")
+	private Set<User> users = new HashSet<>();
 
 	public Long getDepartmentId() {
 		return departmentId;
@@ -100,6 +105,15 @@ public class Department {
 	public void setModifiedDt(LocalDateTime modifiedDt) {
 		this.modifiedDt = modifiedDt;
 	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
+	}
+	
 	
 
 }

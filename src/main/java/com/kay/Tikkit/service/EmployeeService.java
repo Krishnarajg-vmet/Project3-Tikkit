@@ -77,6 +77,8 @@ public class EmployeeService {
 			Department department = departmentrepository.findById(dto.getDepartmentId()).orElseThrow(() -> new EntityNotFoundException("Department not found"));
 			Designation designation = designationRepository.findById(dto.getDesignationId()).orElseThrow(() -> new EntityNotFoundException("Designation not found"));
 			Area area = areaRepository.findById(dto.getAreaId()).orElseThrow(() -> new EntityNotFoundException("Area not found"));
+			existing.setModifiedDt(LocalDateTime.now());
+			existing.setIsActive(dto.getIsActive());
 			EmployeeMapper.updateEntity(existing, dto, branch, department, designation, area);
 			return EmployeeMapper.toDto(employeeRepository.save(existing));
 		}).orElseThrow(() -> new EntityNotFoundException("Employee not found"));
