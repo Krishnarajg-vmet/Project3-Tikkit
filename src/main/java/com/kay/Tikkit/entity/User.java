@@ -7,6 +7,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name="users")
 public class User {
 	
 	@Id
@@ -21,11 +22,15 @@ public class User {
 	@JoinColumn(name = "employee_id", nullable = false)
 	private Employee employee;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<UserRole> userRoles = new HashSet<>();
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<UserDepartment> userDepartments = new HashSet<>();
+	
+	@ManyToOne
+	@JoinColumn(name = "department_id")
+	private Department department;
 	
 	@Column(name="is_active", nullable = false)
 	private Boolean isActive;
@@ -99,7 +104,40 @@ public class User {
 	public void setUserDepartments(Set<UserDepartment> userDepartments) {
 		this.userDepartments = userDepartments;
 	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
 	
-	
+	public void addRole(Role role) {
+	    UserRole userRole = new UserRole();
+	    userRole.setUser(this);
+	    userRole.setRole(role);
+	    userRole.setIsActive(true);
+	    userRole.setCreatedDt(LocalDateTime.now());
+	    this.userRoles.add(userRole);
+	}
+
+	public void removeRole(Role role) {
+	    this.userRoles.removeIf(ur -> ur.getRole().getRoleId().equals(role.getRoleId()));
+	}
+
+	public void addDepartment(Department department) {
+	    UserDepartment userDept = new UserDepartment();
+	    userDept.setUser(this);
+	    userDept.setDepartment(department);
+	    userDept.setIsActive(true);
+	    userDept.setCreatedDt(LocalDateTime.now());
+	    this.userDepartments.add(userDept);
+	}
+
+	public void removeDepartment(Department department) {
+	    this.userDepartments.removeIf(ud -> ud.getDepartment().getDepartmentId().equals(department.getDepartmentId()));
+	}
+
 
 }

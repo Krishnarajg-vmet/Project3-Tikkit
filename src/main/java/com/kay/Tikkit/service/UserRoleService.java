@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.kay.Tikkit.entity.Role;
 import com.kay.Tikkit.entity.User;
-import com.kay.Tikkit.entity.UserRole;
 import com.kay.Tikkit.repositories.*;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -32,12 +31,7 @@ public class UserRoleService {
         }
 
         user.getUserRoles().clear();
-        for (Role role : roles) {
-            UserRole userRole = new UserRole();
-            userRole.setUser(user);
-            userRole.setRole(role);
-            user.getUserRoles().add(userRole);
-        }
+        roles.forEach(user::addRole);
 
         userRepository.save(user);
     }
@@ -46,7 +40,10 @@ public class UserRoleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        user.getUserRoles().removeIf(ur -> ur.getRole().getRoleId().equals(roleId));
+        Role dummyRole = new Role();
+        dummyRole.setRoleId(roleId);
+        user.removeRole(dummyRole);
+
         userRepository.save(user);
     }
 }

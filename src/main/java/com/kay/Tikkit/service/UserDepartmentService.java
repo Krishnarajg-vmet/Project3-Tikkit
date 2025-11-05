@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.kay.Tikkit.entity.Department;
 import com.kay.Tikkit.entity.User;
-import com.kay.Tikkit.entity.UserDepartment;
 import com.kay.Tikkit.repositories.DepartmentRepository;
 import com.kay.Tikkit.repositories.UserRepository;
 
@@ -30,12 +29,7 @@ public class UserDepartmentService {
         Set<Department> departments = new HashSet<>(departmentRepository.findAllById(departmentIds));
 
         user.getUserDepartments().clear();
-        for (Department dept : departments) {
-            UserDepartment userDept = new UserDepartment();
-            userDept.setUser(user);
-            userDept.setDepartment(dept);
-            user.getUserDepartments().add(userDept);
-        }
+        departments.forEach(user::addDepartment);
 
         userRepository.save(user);
     }
@@ -44,7 +38,10 @@ public class UserDepartmentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        user.getUserDepartments().removeIf(ud -> ud.getDepartment().getDepartmentId().equals(departmentId));
+        Department dummyDept = new Department();
+        dummyDept.setDepartmentId(departmentId);
+        user.removeDepartment(dummyDept);
+
         userRepository.save(user);
     }
 }

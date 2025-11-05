@@ -58,10 +58,12 @@ public class UserService {
 
         Set<Department> departments = new HashSet<>(departmentRepository.findAllById(dto.getDepartmentIds()));
 
+        dto.setUserId(null);
         dto.setCreatedDt(LocalDateTime.now());
         dto.setIsActive(true);
 
         User user = UserMapper.toEntity(dto, roles, departments);
+        user.setUserId(null);
         user.setCreatedDt(LocalDateTime.now());
 
         User savedUser = userRepository.save(user);
