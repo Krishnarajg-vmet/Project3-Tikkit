@@ -2,20 +2,14 @@ package com.kay.Tikkit.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kay.Tikkit.dto.TicketHistoryDto;
-import com.kay.Tikkit.entity.Ticket;
-import com.kay.Tikkit.entity.TicketHistory;
-import com.kay.Tikkit.entity.User;
+import com.kay.Tikkit.entity.*;
 import com.kay.Tikkit.mapper.TicketHistoryMapper;
-import com.kay.Tikkit.repositories.TicketHistoryRepository;
-import com.kay.Tikkit.repositories.TicketRepository;
-import com.kay.Tikkit.repositories.UserRepository;
-
+import com.kay.Tikkit.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -30,27 +24,29 @@ public class TicketHistoryService {
     @Autowired
     private UserRepository userRepository;
 
-    public TicketHistoryDto addHistory(TicketHistoryDto dto) {
-        Ticket ticket = ticketRepository.findById(dto.getTicketHistoryId())
-                .orElseThrow(() -> new EntityNotFoundException("Ticket not found"));
-        User changedBy = userRepository.findById(dto.getChangedByUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        dto.setChangedAt(LocalDateTime.now());
-
-        TicketHistory history = TicketHistoryMapper.toEntity(dto, ticket, changedBy);
-        history = ticketHistoryRepository.save(history);
-
-        return TicketHistoryMapper.toDto(history);
-    }
-
-    public List<TicketHistoryDto> getHistoryByTicket(Long ticketId) {
+    public TicketHistoryDto addTicketHistory(Long ticketId, String fieldChanged, String oldValue, String newValue, Long changedByUserId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new EntityNotFoundException("Ticket not found"));
 
-        return ticketHistoryRepository.findByTicket(ticket)
-                .stream()
-                .map(TicketHistoryMapper::toDto)
-                .collect(Collectors.toList());
+        User changedBy = userRepository.findById(changedByUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        TicketHistory history = new TicketHistory();
+        history.setTicket(ticket);
+        history.setFieldChanged(fieldChanged);
+        history.setOldValue(oldValue);
+        history.setNewValue(newValue);
+        history.setChangedAt(LocalDateTime.now());
+        history.setChangesBy(changedBy);
+
+        return TicketHistoryMapper.toDto(ticketHistoryRepository.save(history));
     }
+    
+    public List<TicketHistoryDto> getHistoryByTicket(Long ticketId) {
+        List<TicketHistory> historyList = ticketHistoryRepository.findByTicketId(ticketId);
+        return historyList.stream()
+                .map(TicketHistoryMapper::toDto)
+                .toList();
+    }
+
 }

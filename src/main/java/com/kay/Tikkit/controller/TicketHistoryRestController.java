@@ -20,7 +20,13 @@ public class TicketHistoryRestController {
 
     @PostMapping
     public ResponseEntity<TicketHistoryDto> addHistory(@RequestBody TicketHistoryDto dto) {
-        TicketHistoryDto created = ticketHistoryService.addHistory(dto);
+        TicketHistoryDto created = ticketHistoryService.addTicketHistory(
+                dto.getTicketHistoryId(),
+                dto.getFieldChanged(),
+                dto.getOldValue(),
+                dto.getNewValue(),
+                dto.getChangedByUserId()
+        );
         return ResponseEntity.ok(created);
     }
 

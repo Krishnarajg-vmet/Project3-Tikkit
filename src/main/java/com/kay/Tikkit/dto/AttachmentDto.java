@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 public class AttachmentDto {
 
 	private Long attachmentId;
+	private Long ticketId;
+	private String ticketNumber;
     private String fileName;
     private String fileType;
     private String fileUrl;
@@ -60,6 +62,18 @@ public class AttachmentDto {
 	public void setUploadedAt(LocalDateTime uploadedAt) {
 		this.uploadedAt = uploadedAt;
 	}
-    
-    
+	public Long getTicketId() {
+		return ticketId;
+	}
+	public void setTicketId(Long ticketId) {
+		this.ticketId = ticketId;
+	}
+	public String getTicketNumber() {
+		return ticketNumber;
+	}
+	public void setTicketNumber(String ticketNumber) {
+		this.ticketNumber = ticketNumber;
+	}
+	    
+   
 }
