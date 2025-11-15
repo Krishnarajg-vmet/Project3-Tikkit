@@ -36,15 +36,19 @@ public class RoleService {
 	}
 	
 	public RoleDto updateRole(Long id, RoleDto dto) {
-        return roleRepository.findById(id)
-                .map(existingRole -> {
-                    Role roleToUpdate = RoleMapper.toEntity(dto);
-                    existingRole.setRoleName(roleToUpdate.getRoleName());
-                    existingRole.setIsActive(roleToUpdate.getIsActive());
-                    existingRole.setModifiedDt(LocalDateTime.now());
-                    return RoleMapper.toDto(roleRepository.save(existingRole));
-                }).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-    }
+	    return roleRepository.findById(id)
+	        .map(existingRole -> {
+	            if (dto.getRoleName() != null)
+	                existingRole.setRoleName(dto.getRoleName());
+
+	            if (dto.getIsActive() != null)
+	                existingRole.setIsActive(dto.getIsActive());
+
+	            existingRole.setModifiedDt(LocalDateTime.now());
+	            return RoleMapper.toDto(roleRepository.save(existingRole));
+	        })
+	        .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+	}
 	
 	public List<RoleDto> getAllRole() {
 		return roleRepository.findAll()

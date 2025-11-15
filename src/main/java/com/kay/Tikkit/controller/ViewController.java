@@ -110,5 +110,16 @@ public class ViewController {
 	public String employeeListPage() {
 		return "employees-list";
 	}
+	
+	@GetMapping("/view/roles")
+	public String rolePage() {
+		return "roles";
+	}
+	
+	@GetMapping("/view/users")
+	public String userPage() {
+		return "users";
+	}
+	
 
 }

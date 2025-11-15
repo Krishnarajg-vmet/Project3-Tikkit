@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Users - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      user-select: none;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      font-size: 12px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+
+    .search-input {
+      width: 100%;
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+
+    .table th,
+    .table td {
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    .btn-action {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+
+    .container {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .left-pane {
+      flex: 1;
+      background: white;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      min-width: 420px;
+      max-width: 500px;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+
+    .right-pane {
+      flex: 2.5;
+      background: white;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      height: calc(100vh - 110px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-responsive {
+      flex-grow: 1;
+      overflow: auto;
+    }
+
+    .form-control,
+    .form-select {
+      font-size: 12px;
+      height: 30px;
+      padding: 4px 8px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .mandatory::after {
+      content: "*";
+      color: red;
+      margin-left: 2px;
+    }
+
+    #employeeSearchModal .modal-dialog {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      font-size: 11px;
+      user-select: none;
+      box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      <span>Tikkit</span>
+    </a>
+
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+      <li class="nav-item">
+        <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
+      </li>
+      <li class="nav-item ms-3">
+        <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
+      </li>
+    </ul>
+
+    <div class="d-flex align-items-center">
+      <button class="btn btn-outline-secondary btn-sm" title="Settings">B</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+
+    <!-- LEFT PANE (USER FORM) -->
+    <form id="userForm" class="needs-validation" novalidate>
+      <div class="left-pane">
+
+        <div class="section-header">
+          <div>User</div>
+          <div class="d-flex gap-2">
+            <button type="submit" id="btnSave" class="btn btn-success btn-sm flex-grow-1">Save</button>
+            <button type="button" id="btnUpdate" class="btn btn-primary btn-sm flex-grow-1" style="display:none;"
+              onclick="updateUser()">Update</button>
+            <button type="button" onclick="resetForm()" class="btn btn-secondary btn-sm flex-grow-1">Clear</button>
+          </div>
+        </div>
+
+        <!-- Employee Search -->
+        <div class="mb-2">
+          <label class="form-label mandatory">Employee</label>
+          <div class="input-group">
+            <input type="text" id="employeeName" class="form-control" readonly required>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openEmployeeModal()">S</button>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label mandatory">User Name</label>
+          <input type="text" id="userName" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label mandatory">Role</label>
+            <select id="roleId" class="form-select" required>
+                <option value="">-- Select Role --</option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Department</label>
+          <input type="text" id="departmentName" class="form-control" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-check-label">
+            <input type="checkbox" id="isActive" class="form-check-input" checked>
+            Active
+          </label>
+        </div>
+
+        <!-- Hidden Inputs -->
+        <input type="hidden" id="userId">
+        <input type="hidden" id="employeeId">
+        <input type="hidden" id="departmentId">
+
+        <div class="d-flex justify-content-end">
+          <span class="text-danger">* Indicates Mandatory Fields</span>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- RIGHT PANE (TABLE LIST) -->
+    <div class="right-pane">
+
+      <div class="table-section">
+
+        <div class="section-header d-flex justify-content-between">
+          <div>User List</div>
+          <div><button id="btnGetData" class="btn btn-sm btn-primary">Get Data</button></div>
+        </div>
+
+        <!-- Search Fields -->
+        <div class="p-2 border-bottom bg-light">
+          <div class="row g-2">
+            <div class="col">
+              <input type="text" id="searchUserName" class="form-control form-control-sm"
+                placeholder="Search User Name">
+            </div>
+            <div class="col">
+              <input type="text" id="searchRole" class="form-control form-control-sm"
+                placeholder="Search Role">
+            </div>
+            <div class="col">
+              <input type="text" id="searchEmployee" class="form-control form-control-sm"
+                placeholder="Search Employee">
+            </div>
+            <div class="col">
+              <input type="text" id="searchDepartment" class="form-control form-control-sm"
+                placeholder="Search Department">
+            </div>
+            <div class="col">
+              <input type="text" id="searchIsActive" class="form-control form-control-sm"
+                placeholder="Active (A/I)">
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive flex-grow-1">
+          <table class="table table-bordered table-striped table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>User Name</th>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th style="width:120px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMPLOYEE SEARCH MODAL -->
+  <div class="modal fade" id="employeeSearchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Select Employee</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="input-group mb-2">
+            <input type="text" id="employeeSearchText" class="form-control" placeholder="Search by code or name">
+            <button class="btn btn-primary btn-sm" onclick="searchEmployee()">Search</button>
+          </div>
+
+          <div class="table-responsive" style="max-height:400px;">
+            <table class="table table-bordered table-striped table-sm">
+              <thead class="table-light">
+                <tr>
+                  <th>Code</th>
+                  <th>Employee</th>
+                  <th>Department</th>
+                  <th>Select</th>
+                </tr>
+              </thead>
+              <tbody id="employeeModalTableBody"></tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer bg-white border-top text-center p-1">
+    Tikkit - Users - v1.0.0 ©2023
+  </footer>
+
+  <!-- JS LOGIC -->
+  <script>
+    const API = "/api/users";
+    const EMP_API = "/api/employees";
+
+    const form = document.getElementById("userForm");
+    const tbody = document.getElementById("userTableBody");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      const data = collectFormData();
+
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) return alert("Failed to save");
+      alert("User saved successfully");
+
+      resetForm();
+      fetchUsers();
+    });
+
+    function collectFormData() {
+      const userId = parseInt(document.getElementById("userId").value || 0);
+
+      const payload = {
+        userName: document.getElementById("userName").value.trim(),
+        employeeId: parseInt(document.getElementById("employeeId").value),
+        departmentId: parseInt(document.getElementById("departmentId").value),
+        roleId: parseInt(document.getElementById("roleId").value),
+        isActive: document.getElementById("isActive").checked
+      };
+
+      if (userId > 0) payload.userId = userId;
+
+      return payload;
+    }
+
+    function resetForm() {
+      form.reset();
+      form.classList.remove("was-validated");
+      document.getElementById("userId").value = "";
+      document.getElementById("employeeId").value = "";
+      document.getElementById("departmentId").value = "";
+      document.getElementById("employeeName").value = "";
+      document.getElementById("departmentName").value = "";
+
+      document.getElementById("btnSave").style.display = "inline-block";
+      document.getElementById("btnUpdate").style.display = "none";
+    }
+
+    // FETCH USERS LIST
+    async function fetchUsers() {
+      const sp = new URLSearchParams();
+      if (userName.value.trim()) sp.append("userName", userName.value.trim());
+      if (searchEmployee.value.trim()) sp.append("employeeName", searchEmployee.value.trim());
+      if (searchDepartment.value.trim()) sp.append("departmentName", searchDepartment.value.trim());
+      if (searchRole.value.trim()) sp.append("roleName", searchRole.value.trim());
+
+      const act = searchIsActive.value.trim().toUpperCase();
+      if (act === "A") sp.append("isActive", "true");
+      else if (act === "I") sp.append("isActive", "false");
+
+      const res = await fetch(`/api/users?${sp.toString()}`);
+      const list = await res.json();
+      renderUsers(list);
+    }
+
+    function renderUsers(list) {
+      tbody.innerHTML = "";
+      list.forEach(u => {
+        const tr = document.createElement("tr");
+		let employeename = u.firstName + " " + u.lastName;
+        tr.innerHTML = `
+          <td>${u.userId}</td>
+          <td>${u.userName}</td>
+          <td>${employeename}</td>
+          <td>${u.departmentName || ""}</td>
+          <td>${u.isActive ? "Active" : "Inactive"}</td>
+          <td>
+            <button class="btn btn-sm btn-info btn-action" onclick="editUser(${u.userId})">E</button>
+            <button class="btn btn-sm btn-warning btn-action" onclick="toggleUser(${u.userId}, ${u.isActive})">${u.isActive ? "I" : "A"}</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function editUser(id) {
+      const res = await fetch(`/api/users/${id}`);
+      const u = await res.json();
+		let employeename = u.firstName + " " + u.lastName;
+      document.getElementById("userId").value = u.userId;
+      document.getElementById("userName").value = u.userName ;
+      document.getElementById("employeeId").value = u.employeeId;
+      document.getElementById("employeeName").value = employeename;
+      document.getElementById("departmentId").value = u.departmentId;
+      document.getElementById("roleId").value = u.roleId;
+      document.getElementById("departmentName").value = u.departmentName;
+
+      document.getElementById("isActive").checked = u.isActive;
+
+      document.getElementById("btnSave").style.display = "none";
+      document.getElementById("btnUpdate").style.display = "inline-block";
+
+      form.classList.remove("was-validated");
+    }
+
+    async function updateUser() {
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      const data = collectFormData();
+      const id = data.userId;
+
+      const res = await fetch(`/api/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) return alert("Update failed");
+
+      alert("User updated successfully");
+      resetForm();
+      fetchUsers();
+    }
+
+    async function toggleUser(id, current) {
+      if (!confirm(`Are you sure you want to ${current ? "deactivate" : "activate"} this user?`)) return;
+
+      const res = await fetch(`/api/users/${id}`, {
+        method: "DELETE"
+      });
+
+      if (!res.ok) return alert("Failed to toggle status");
+      alert("Status changed");
+      fetchUsers();
+    }
+
+    const ROLE_API = "/api/roles"; // your roles API
+
+// Load roles into dropdown
+    async function loadRoles() {
+    try {
+        const res = await fetch(ROLE_API);
+        const roles = await res.json();
+
+        const roleSelect = document.getElementById("roleId");
+        roleSelect.innerHTML = '<option value="">-- Select Role --</option>'; // reset
+        roles.forEach(role => {
+        const option = document.createElement("option");
+        option.value = role.roleId;
+        option.text = role.roleName;
+        roleSelect.add(option);
+        });
+    } catch (err) {
+        console.error("Failed to load roles", err);
+    }
+    }
+
+    // Pre-select role when editing
+    function setUserRole(roleId) {
+    const roleSelect = document.getElementById("roleId");
+    roleSelect.value = roleId || "";
+    }
+    // Load initial data
+    fetchUsers();
+    window.onload = () => {
+    loadRoles();
+    fetchUsers();
+    };
+  </script>
+  <script>
+    // ---------------- EMPLOYEE SEARCH MODAL -------------------
+let employeeModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the modal after DOM is loaded
+    employeeModal = new bootstrap.Modal(document.getElementById("employeeSearchModal"));
+    
+    // Load initial employee list
+    loadAllEmployees();
+    
+    // Attach event listener for the search
+    document.getElementById("employeeSearchText").addEventListener('input', searchEmployee);
+});
+
+// Make openEmployeeModal global, so it's accessible for the button's onclick
+function openEmployeeModal() {
+    employeeModal.show();
+    loadAllEmployees(); // Load employees when modal is shown
+}
+
+async function loadAllEmployees() {
+    const res = await fetch(EMP_API);
+    const list = await res.json();
+    renderEmployeeModal(list);
+}
+
+async function searchEmployee() {
+    const q = document.getElementById("employeeSearchText").value.toLowerCase();
+
+    const res = await fetch(EMP_API);
+    const list = await res.json();
+
+    const filtered = list.filter(e =>
+        e.firstName.toLowerCase().includes(q) ||
+        e.lastName.toLowerCase().includes(q) ||
+        (e.employeeCode || "").toLowerCase().includes(q)
+    );
+
+    renderEmployeeModal(filtered);
+}
+
+function renderEmployeeModal(list) {
+    const tbody = document.getElementById("employeeModalTableBody");
+    tbody.innerHTML = "";
+
+    list.forEach(e => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${e.employeeCode || ""}</td>
+            <td>${e.firstName} ${e.lastName}</td>
+            <td>${e.departmentName || ""}</td>
+            <td><button class="btn btn-success btn-sm btn-action" onclick='selectEmployee(${JSON.stringify(e)})'>Select</button></td>
+          </tr>
+        `;
+    });
+}
+
+function selectEmployee(e) {
+    document.getElementById("employeeId").value = e.employeeId;
+    document.getElementById("employeeName").value = e.firstName + " " + e.lastName;
+    document.getElementById("departmentId").value = e.departmentId;
+    document.getElementById("departmentName").value = e.departmentName;
+
+    employeeModal.hide();
+}
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

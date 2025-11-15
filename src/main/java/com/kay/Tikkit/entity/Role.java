@@ -1,8 +1,6 @@
 package com.kay.Tikkit.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -16,9 +14,6 @@ public class Role {
 	
 	@Column(name="role_name", nullable = false, unique = true)
 	private String roleName;
-	
-	@OneToMany(mappedBy = "role")
-	private Set<UserRole> userRoles = new HashSet<>();
 	
 	@Column(name="is_active", nullable = false)
 	private Boolean isActive;
@@ -43,14 +38,6 @@ public class Role {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
-	}
-
-	public Set<UserRole> getUserRoles() {
-		return userRoles;
-	}
-
-	public void setUserRoles(Set<UserRole> userRoles) {
-		this.userRoles = userRoles;
 	}
 
 	public Boolean getIsActive() {

@@ -1,8 +1,6 @@
 package com.kay.Tikkit.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -15,27 +13,25 @@ public class User {
 	@Column(name="user_id")
 	private Long userId;
 	
-	@Column(name="user_name", nullable = false, unique = true)
+	@Column(name="user_name", nullable = false)
 	private String userName;
 	
 	@OneToOne
-	@JoinColumn(name = "employee_id", nullable = false)
+	@JoinColumn(name="employee_id")
 	private Employee employee;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<UserRole> userRoles = new HashSet<>();
-	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<UserDepartment> userDepartments = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name="role_id")
+	private Role role;
 	
 	@ManyToOne
-	@JoinColumn(name = "department_id")
+	@JoinColumn(name="department_id")
 	private Department department;
 	
 	@Column(name="is_active", nullable = false)
 	private Boolean isActive;
 	
-	@Column(name = "created_dt", nullable=false)
+	@Column(name="created_dt")
 	private LocalDateTime createdDt;
 	
 	@Column(name="modified_dt")
@@ -65,12 +61,20 @@ public class User {
 		this.employee = employee;
 	}
 
-	public Set<UserRole> getUserRoles() {
-		return userRoles;
+	public Role getRole() {
+		return role;
 	}
 
-	public void setUserRoles(Set<UserRole> userRoles) {
-		this.userRoles = userRoles;
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 
 	public Boolean getIsActive() {
@@ -96,48 +100,5 @@ public class User {
 	public void setModifiedDt(LocalDateTime modifiedDt) {
 		this.modifiedDt = modifiedDt;
 	}
-
-	public Set<UserDepartment> getUserDepartments() {
-		return userDepartments;
-	}
-
-	public void setUserDepartments(Set<UserDepartment> userDepartments) {
-		this.userDepartments = userDepartments;
-	}
-
-	public Department getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
-	
-	public void addRole(Role role) {
-	    UserRole userRole = new UserRole();
-	    userRole.setUser(this);
-	    userRole.setRole(role);
-	    userRole.setIsActive(true);
-	    userRole.setCreatedDt(LocalDateTime.now());
-	    this.userRoles.add(userRole);
-	}
-
-	public void removeRole(Role role) {
-	    this.userRoles.removeIf(ur -> ur.getRole().getRoleId().equals(role.getRoleId()));
-	}
-
-	public void addDepartment(Department department) {
-	    UserDepartment userDept = new UserDepartment();
-	    userDept.setUser(this);
-	    userDept.setDepartment(department);
-	    userDept.setIsActive(true);
-	    userDept.setCreatedDt(LocalDateTime.now());
-	    this.userDepartments.add(userDept);
-	}
-
-	public void removeDepartment(Department department) {
-	    this.userDepartments.removeIf(ud -> ud.getDepartment().getDepartmentId().equals(department.getDepartmentId()));
-	}
-
 
 }

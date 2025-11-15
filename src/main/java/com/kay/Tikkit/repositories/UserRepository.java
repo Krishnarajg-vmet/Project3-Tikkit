@@ -1,6 +1,6 @@
 package com.kay.Tikkit.repositories;
 
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,14 +8,16 @@ import org.springframework.stereotype.Repository;
 import com.kay.Tikkit.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
+public interface UserRepository extends JpaRepository<User, Long> {
 	
 	Optional<User> findByUserName(String userName);
 	
-	Optional<User> findByEmployeeEmployeeCode(String employeeCode);
+	Optional<User> findByUserId(Long userId);
+	
+	List<User> findByRoleRoleId(Long roleId);
+	
+	List<User> findByDepartmentDepartmentId(Long departmentId);
 	
 	boolean existsByUserName(String userName);
-	
-	boolean existsByEmployeeEmployeeCode(String employeeCode);
 
 }
