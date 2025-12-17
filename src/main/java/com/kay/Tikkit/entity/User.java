@@ -16,6 +16,12 @@ public class User {
 	@Column(name="user_name", nullable = false)
 	private String userName;
 	
+	@Column(name="password")
+	private String password;
+
+	@Column(name="password_reset_required")
+	private Boolean passwordResetRequired = true;
+
 	@OneToOne
 	@JoinColumn(name="employee_id")
 	private Employee employee;
@@ -99,6 +105,22 @@ public class User {
 
 	public void setModifiedDt(LocalDateTime modifiedDt) {
 		this.modifiedDt = modifiedDt;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Boolean getPasswordResetRequired() {
+		return passwordResetRequired;
+	}
+
+	public void setPasswordResetRequired(Boolean passwordResetRequired) {
+		this.passwordResetRequired = passwordResetRequired;
 	}
 
 }

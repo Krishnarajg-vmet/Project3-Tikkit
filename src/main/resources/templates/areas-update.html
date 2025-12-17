@@ -5,49 +5,109 @@
   <title>Edit Area - Tikkit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
-    :root {
-      user-select: none;
+    /* Base Styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background: #f7f9fb;
+      transition: background 0.3s, color 0.3s;
+      height: 100%;
     }
-    body {
-      background-color: #f5f5f5;
+
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .navbar-custom .btn, .navbar-custom input {
       font-size: 12px;
     }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
+
+    /* Main container */
+    .main-container {
+      padding: 70px 16px 50px; /* leave space for navbar + footer */
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Form Styles */
     .form-label {
       margin-bottom: 2px;
       font-weight: 500;
     }
+
     .form-control, .form-select {
       padding: 4px 6px;
       font-size: 12px;
       height: auto;
     }
+
     .form-section {
       background-color: #fff;
       border: 1px solid #dee2e6;
       padding: 10px;
       margin-bottom: 10px;
+      border-radius: 4px;
     }
+
     .btn-sm {
       padding: 4px 10px;
       font-size: 12px;
       margin-left: 6px;
     }
-   
-    .navbar-brand img {
-      height: 30px;
-      margin-right: 8px;
-    }
-    .navbar-nav .nav-link {
-      font-size: 14px;
-      padding: 6px 12px;
-    }
-    .search-input {
-      width: 250px;
-      font-size: 12px;
-      height: 30px;
-      padding: 4px 8px;
-    }
+
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -58,7 +118,15 @@
       font-weight: bold;
       font-size: 13px;
       margin-bottom: 10px;
+      border-radius: 4px;
     }
+
+    body.dark-mode .section-header {
+      background: #3a3a3a;
+      border-color: #555;
+      color: #ddd;
+    }
+
     .mandatory::after {
       content: "*";
       color: red;
@@ -68,79 +136,95 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
-  <a class="navbar-brand d-flex align-items-center" href="#">
+<!-- Navbar -->
+<nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+  <a class="navbar-brand" href="#">
     <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
-    <span>Tikkit</span>
+    Tikkit
   </a>
 
-  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
-    <li class="nav-item">
-      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
-    </li>
-    <li class="nav-item ms-3">
-      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
-    </li>
-  </ul>
+  <div class="form-check form-switch text-white ms-3">
+    <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+    <label class="form-check-label" for="darkToggle">Dark Mode</label>
+  </div>
 
-  <div class="d-flex align-items-center">
-    <button class="btn btn-outline-secondary btn-sm" title="Settings">
-        B
-    </button>
+  <div class="ms-auto d-flex gap-2 align-items-center">
+    <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+    <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+    <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+    <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
   </div>
 </nav>
 
-<form id="areaForm" class="needs-validation" novalidate>
-  <div class="section-header">
-    <div>Edit Area</div>
-    <div>
-      <button type="submit" class="btn btn-primary btn-sm">Update</button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="goToGridView()">Cancel</button>
+<!-- Main container -->
+<div class="main-container">
+  <form id="areaForm" class="needs-validation" novalidate>
+    <div class="section-header">
+      <div>Edit Area</div>
+      <div>
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="goToGridView()">Cancel</button>
+      </div>
     </div>
-  </div>
 
-  <div class="container-fluid d-flex align-items-center">
-    <div class="col-md-8 form-section">
+    <div class="container-fluid d-flex align-items-center">
+      <div class="col-md-8 form-section">
         <div class="row mb-2">
-        <label for="areaName" class="col-sm-2 col-form-label mandatory">Area Name</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="areaName" required />
-          <div class="invalid-feedback">Area name is required.</div>
+          <label for="areaName" class="col-sm-2 col-form-label mandatory">Area Name</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="areaName" required />
+            <div class="invalid-feedback">Area name is required.</div>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <label for="country" class="col-sm-2 col-form-label mandatory">Country</label>
+          <div class="col-sm-4">
+            <select class="form-select" id="country" required></select>
+            <div class="invalid-feedback">Country is required.</div>
+          </div>
+
+          <label for="state" class="col-sm-2 col-form-label mandatory">State</label>
+          <div class="col-sm-4">
+            <select class="form-select" id="state" required disabled></select>
+            <div class="invalid-feedback">State is required.</div>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <label for="district" class="col-sm-2 col-form-label mandatory">District</label>
+          <div class="col-sm-4">
+            <select class="form-select" id="district" required disabled></select>
+            <div class="invalid-feedback">District is required.</div>
+          </div>
+
+          <label for="city" class="col-sm-2 col-form-label mandatory">City</label>
+          <div class="col-sm-4">
+            <select class="form-select" id="city" required disabled></select>
+            <div class="invalid-feedback">City is required.</div>
+          </div>
         </div>
       </div>
-      <div class="row mb-2">
-        <label for="country" class="col-sm-2 col-form-label mandatory">Country</label>
-        <div class="col-sm-4">
-          <select class="form-select" id="country" required></select>
-          <div class="invalid-feedback">Country is required.</div>
-        </div>
-
-        <label for="state" class="col-sm-2 col-form-label mandatory">State</label>
-        <div class="col-sm-4">
-          <select class="form-select" id="state" required disabled></select>
-          <div class="invalid-feedback">State is required.</div>
-        </div>
-      </div>
-
-      <div class="row mb-2">
-        <label for="district" class="col-sm-2 col-form-label mandatory">District</label>
-        <div class="col-sm-4">
-          <select class="form-select" id="district" required disabled></select>
-          <div class="invalid-feedback">District is required.</div>
-        </div>
-
-        <label for="city" class="col-sm-2 col-form-label mandatory">City</label>
-        <div class="col-sm-4">
-          <select class="form-select" id="city" required disabled></select>
-          <div class="invalid-feedback">City is required.</div>
-        </div>
-      </div>
-
     </div>
-  </div>
-</form>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>Tikkit © 2025</footer>
 
 <script>
+// Dark Mode Toggle
+const darkToggle = document.getElementById("darkToggle");
+darkToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+  // Logout placeholder
+  function logout() {
+    window.location.href = "/logout";
+}
+
+  // Existing Area form logic
   const form = document.getElementById('areaForm');
   const countrySelect = document.getElementById('country');
   const stateSelect   = document.getElementById('state');
@@ -162,35 +246,35 @@
   }
 
   async function loadStates(countryId, selectedStateId = null) {
-	  stateSelect.innerHTML = '<option value="">Select State</option>';
-	  districtSelect.innerHTML = '<option value="">Select District</option>';
-	  districtSelect.disabled = true;
+    stateSelect.innerHTML = '<option value="">Select State</option>';
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    districtSelect.disabled = true;
 
-	  if (!countryId) {
-	    stateSelect.disabled = true;
-	    return;
-	  }
+    if (!countryId) {
+      stateSelect.disabled = true;
+      return;
+    }
 
-	  const res = await fetch(`/api/states/by-country/${countryId}`);
-	  const states = await res.json();
+    const res = await fetch(`/api/states/by-country/${countryId}`);
+    const states = await res.json();
 
-	  if (states.length === 0) {
-	    stateSelect.disabled = true;
-	    districtSelect.disabled = true;
-	  } else {
-	    stateSelect.disabled = false;
-	    states.forEach(s => {
-	      const opt = document.createElement('option');
-	      opt.value = s.stateId;
-	      opt.textContent = s.stateName;
-	      if (s.stateId == selectedStateId) opt.selected = true;
-	      stateSelect.appendChild(opt);
-	    });
-	    if (selectedStateId) {
-	      await loadDistricts(selectedStateId); // load districts for selected state
-	    }
-	  }
-	}
+    if (states.length === 0) {
+      stateSelect.disabled = true;
+      districtSelect.disabled = true;
+    } else {
+      stateSelect.disabled = false;
+      states.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.stateId;
+        opt.textContent = s.stateName;
+        if (s.stateId == selectedStateId) opt.selected = true;
+        stateSelect.appendChild(opt);
+      });
+      if (selectedStateId) {
+        await loadDistricts(selectedStateId);
+      }
+    }
+  }
 
   async function loadDistricts(stateId, selDistrictId) {
     districtSelect.innerHTML = '<option value="">-- Select District --</option>';
@@ -244,43 +328,28 @@
       fetch(`/api/countries`)
     ]);
     const area = await areaRes.json();
-    // assume area DTO has countryId, stateId, districtId, cityId, areaName
-
     await loadCountries(area.countryId);
     await loadStates(area.countryId, area.stateId);
     await loadDistricts(area.stateId, area.districtId);
     await loadCities(area.districtId, area.cityId);
-
     document.getElementById('areaName').value = area.areaName;
   }
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     form.classList.add('was-validated');
-
     const countryId = countrySelect.value;
     const stateId   = stateSelect.value;
     const districtId= districtSelect.value;
     const cityId    = citySelect.value;
     const areaName  = document.getElementById('areaName').value.trim();
-
     if (!countryId || !stateId || !districtId || !cityId || !areaName) return;
-
-    const body = {
-      countryId,
-      stateId,
-      districtId,
-      cityId,
-      areaName,
-      isActive: true
-    };
-
+    const body = { countryId, stateId, districtId, cityId, areaName, isActive: true };
     const res = await fetch(`/api/areas/${areaId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-
     if (res.ok) {
       alert('Area updated successfully!');
       window.location.href = '/areas';
@@ -295,19 +364,16 @@
   }
 
   countrySelect.addEventListener('change', function() {
-    const cid = this.value;
-    loadStates(cid, null);
+    loadStates(this.value, null);
     districtSelect.disabled = true;
     citySelect.disabled = true;
   });
   stateSelect.addEventListener('change', function() {
-    const sid = this.value;
-    loadDistricts(sid, null);
+    loadDistricts(this.value, null);
     citySelect.disabled = true;
   });
   districtSelect.addEventListener('change', function() {
-    const did = this.value;
-    loadCities(did, null);
+    loadCities(this.value, null);
   });
 
   window.onload = loadAreaData;

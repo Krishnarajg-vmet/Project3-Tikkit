@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tikkit Dashboard</title>
+
+  <!-- Bootstrap CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <style>
+    /* Base Styles */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      background: #f7f9fb;
+      overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .navbar-custom {
+      background-color: #222 !important;
+      color: #aaa;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
+
+    body.dark-mode .left-menu,
+    body.dark-mode .criteria-box {
+      background: #2b2b2b;
+      border-color: #555;
+      color: #aaa;
+    }
+
+    body.dark-mode .left-menu a,
+    body.dark-mode .left-menu a.dropdown-toggle {
+      color: #ddd !important;
+    }
+
+    body.dark-mode .left-menu a.active,
+    body.dark-mode .left-menu a:hover,
+    body.dark-mode .left-menu a.dropdown-toggle:hover {
+      color: #ddd !important;
+      background-color: #555 !important;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    /* Main container: sidebar + content */
+    .main-container {
+      position: absolute;
+      top: 56px; /* navbar height */
+      bottom: 40px; /* footer height */
+      left: 0;
+      right: 0;
+      display: flex;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    /* Sidebar */
+    .left-menu {
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 12px 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    body.dark-mode .left-menu {
+      background: #2b2b2b;
+      border-color: #555;
+    }
+
+    /* Sidebar links */
+    .left-menu a,
+    .left-menu a.dropdown-toggle {
+      display: flex;
+      align-items: center;
+      padding: 10px 24px;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      border-left: 4px solid transparent;
+      user-select: none;
+    }
+
+    .left-menu a svg,
+    .left-menu a i {
+      margin-right: 12px;
+      font-size: 1.1em;
+    }
+
+    /* Active and hover styles */
+    .left-menu a.active,
+    .left-menu a:hover,
+    .left-menu a.dropdown-toggle:hover {
+      background-color: #0d6efd;
+      color: white !important;
+      border-left-color: #0d6efd;
+      text-decoration: none;
+    }
+
+    /* Dropdown toggles */
+    .left-menu a.dropdown-toggle {
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    /* Dropdown icon */
+    .dropdown-toggle .bi-chevron-down {
+      transition: transform 0.3s ease;
+      font-size: 1.1em;
+    }
+
+    /* Rotate arrow when open */
+    .left-menu a.dropdown-toggle[aria-expanded="true"] .bi-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    /* Dropdown submenu container */
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #f9f9f9;
+      border-left: 4px solid #0d6efd;
+      margin-left: 16px;
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    body.dark-mode .submenu {
+      background: #3a3a3a;
+    }
+
+    /* Show submenu */
+    .submenu.open {
+      max-height: 500px; /* large enough to show all */
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    /* Submenu links */
+    .submenu a {
+      padding: 8px 28px;
+      color: #555;
+      display: block;
+      font-weight: 400;
+      transition: background-color 0.2s, color 0.2s;
+      border-left: none;
+    }
+
+    .submenu a:hover,
+    .submenu a.active {
+      background-color: #cce5ff;
+      color: #0d6efd !important;
+      text-decoration: none;
+    }
+
+    body.dark-mode .submenu a:hover,
+    body.dark-mode .submenu a.active {
+      background-color: #555;
+      color: #ddd !important;
+    }
+
+    /* Content area */
+    .criteria-box {
+      flex-grow: 1;
+      margin: 8px 16px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      position: relative;
+      user-select: none;
+    }
+
+    body.dark-mode .criteria-box {
+      background: #2b2b2b;
+      color: #ddd;
+    }
+
+    /* Page title in content */
+    .right-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: #0d6efd;
+      border-left: 4px solid #0d6efd;
+      padding-left: 12px;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    /* Responsive for small screens */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        top: 56px;
+        bottom: 56px;
+      }
+
+      .left-menu {
+        width: 100%;
+        height: 180px;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+      }
+
+      .left-menu a,
+      .left-menu a.dropdown-toggle {
+        display: inline-flex;
+        margin-right: 12px;
+      }
+
+      .submenu {
+        position: absolute;
+        background: #f7f9fb;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        max-height: none !important;
+        display: none;
+        z-index: 2000;
+        margin-left: 0;
+      }
+
+      .submenu.open {
+        display: block;
+      }
+
+      .criteria-box {
+        margin: 12px;
+        height: calc(100vh - 240px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" onclick="window.location.href='/view/home'">Tikkit</a>
+
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
+
+    <div class="ms-auto d-flex gap-3 align-items-center">
+      <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+      <button class="btn btn-outline-light btn-sm" id="btnDashboard" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <nav class="left-menu" aria-label="Sidebar Navigation">
+      <!-- General with inner dropdown -->
+      <a href="#generalSubmenu" class="dropdown-toggle" aria-expanded="false" role="button" aria-controls="generalSubmenu">
+        General <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <div id="generalSubmenu" class="submenu" aria-label="General submenu">
+        <a href="/create/countries">Country</a>
+        <a href="/create/states">State</a>
+        <a href="/create/districts">District</a>
+        <a href="/create/cities">City</a>
+        <a href="/create/areas">Area</a>
+      </div>
+
+      <!-- Organization with inner dropdown -->
+      <a href="#organizationSubmenu" class="dropdown-toggle" aria-expanded="false" role="button" aria-controls="organizationSubmenu">
+        Organization <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <div id="organizationSubmenu" class="submenu" aria-label="Organization submenu">
+        <a href="/view/companies">Company</a>
+        <a href="/view/branches">Division</a>
+        <a href="/view/departments">Department</a>
+        <a href="/view/designations">Designation</a>
+        <a href="/view/employees">Employees</a>
+      </div>
+
+      <!-- Security with inner dropdown -->
+      <a href="#securitySubmenu" class="dropdown-toggle" aria-expanded="false" role="button" aria-controls="securitySubmenu">
+        Security <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <div id="securitySubmenu" class="submenu" aria-label="Security submenu">
+        <a href="/view/users">Users</a>
+        <a href="/view/roles">Role</a>
+      </div>
+
+      <!-- Tickets with create submenu -->
+      <a href="#ticketsSubmenu" class="dropdown-toggle" aria-expanded="false" role="button" aria-controls="ticketsSubmenu">
+        Tickets <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <div id="ticketsSubmenu" class="submenu" aria-label="Tickets submenu">
+        <a href="/view/ticket/create">Create Ticket</a>
+        <a href="/view/ticket/dashboard">Dashboard - Tickets</a>
+      </div>
+
+      <!-- Dashboard direct link -->
+      <a href="/ticket/report" class="nav-link">
+        Reports
+      </a>
+    </nav>
+
+    <!-- Content area -->
+    <main class="criteria-box" role="main" tabindex="0">
+      <h1 class="right-title">Welcome to Tikkit Dashboard</h1>
+      <p>Your main content goes here.</p>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>Tikkit Dashboard © 2025</footer>
+
+  <script>
+    // Dark Mode Toggle
+    const darkToggle = document.getElementById("darkToggle");
+    darkToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+
+    // Dropdown expand/collapse logic
+    document.querySelectorAll(".left-menu a.dropdown-toggle").forEach(toggle => {
+      toggle.addEventListener("click", e => {
+        e.preventDefault();
+        const submenuId = toggle.getAttribute("href").substring(1);
+        const submenu = document.getElementById(submenuId);
+
+        const isOpen = submenu.classList.contains("open");
+        // Close all submenus first
+        document.querySelectorAll(".submenu.open").forEach(openMenu => {
+          openMenu.classList.remove("open");
+          const parentToggle = document.querySelector(`a[href="#${openMenu.id}"]`);
+          if (parentToggle) parentToggle.setAttribute("aria-expanded", "false");
+        });
+
+        if (!isOpen) {
+          submenu.classList.add("open");
+          toggle.setAttribute("aria-expanded", "true");
+        } else {
+          toggle.setAttribute("aria-expanded", "false");
+        }
+      });
+    });
+
+    // Close submenu when clicking outside
+    document.addEventListener("click", (e) => {
+      const sidebar = document.querySelector(".left-menu");
+      if (!sidebar.contains(e.target)) {
+        document.querySelectorAll(".submenu.open").forEach(openMenu => {
+          openMenu.classList.remove("open");
+          const parentToggle = document.querySelector(`a[href="#${openMenu.id}"]`);
+          if (parentToggle) parentToggle.setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+    
+ // Function to get JWT token from localStorage
+    function getToken() {
+      return localStorage.getItem("jwtToken");
+    }
+
+    // Example function for loading protected data
+    async function loadDashboard() {
+      const token = getToken();
+      if (!token) {
+        alert("You need to log in first!");
+        window.location.href = "/login"; // Redirect to login page if no token is found
+        return;
+      }
+
+      try {
+        const response = await fetch("/view/home", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load dashboard.");
+        }
+
+        const data = await response.json();
+        console.log(data); // Display data to the dashboard
+      } catch (error) {
+        alert(error.message);
+        window.location.href = "/login"; // Redirect to login page if there's an error
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>

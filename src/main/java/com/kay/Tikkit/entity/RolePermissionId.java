@@ -1,0 +1,51 @@
+package com.kay.Tikkit.entity;
+
+import java.io.Serializable;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public class RolePermissionId implements Serializable {
+
+    private Long roleId;
+    private Long permissionId;
+
+    public RolePermissionId() {}
+
+    public RolePermissionId(Long roleId, Long permissionId) {
+        this.roleId = roleId;
+        this.permissionId = permissionId;
+    }
+
+    // equals and hashCode (important for @EmbeddedId)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RolePermissionId)) return false;
+        RolePermissionId that = (RolePermissionId) o;
+        return roleId.equals(that.roleId) && permissionId.equals(that.permissionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return roleId.hashCode() + permissionId.hashCode();
+    }
+
+	public Long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
+	}
+
+	public Long getPermissionId() {
+		return permissionId;
+	}
+
+	public void setPermissionId(Long permissionId) {
+		this.permissionId = permissionId;
+	}
+    
+    
+
+}

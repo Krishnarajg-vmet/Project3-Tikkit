@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kay.Tikkit.dto.RoleDto;
+import com.kay.Tikkit.entity.Permission;
 import com.kay.Tikkit.entity.Role;
 import com.kay.Tikkit.mapper.RoleMapper;
+import com.kay.Tikkit.repositories.PermissionRepository;
 import com.kay.Tikkit.repositories.RoleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +22,9 @@ public class RoleService {
 	
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+    private PermissionRepository permissionRepository;
 	
 	public RoleDto createRole(RoleDto dto) {
 		
@@ -64,5 +69,33 @@ public class RoleService {
 		roleRepository.save(r);
 		});
 	}
+	
+	public RoleDto addPermissionToRole(Long roleId, Long permissionId) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+        Permission permission = permissionRepository.findById(permissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Permission not found"));
+
+        role.getPermissions().add(permission);
+        role.setModifiedDt(LocalDateTime.now());
+        roleRepository.save(role);
+
+        return RoleMapper.toDto(role);
+    }
+	
+	public RoleDto removePermissionFromRole(Long roleId, Long permissionId) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+        Permission permission = permissionRepository.findById(permissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Permission not found"));
+
+        role.getPermissions().remove(permission);
+        role.setModifiedDt(LocalDateTime.now());
+        roleRepository.save(role);
+
+        return RoleMapper.toDto(role);
+    }
 
 }

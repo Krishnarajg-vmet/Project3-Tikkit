@@ -1,0 +1,334 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="user_wise_consolidated" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="63f2bd88-9412-440b-8752-224d071f6990">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="tikkit"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<parameter name="UserId" class="java.lang.Integer"/>
+	<parameter name="FromDate" class="java.sql.Date"/>
+	<parameter name="ToDate" class="java.sql.Date"/>
+	<query language="sql"><![CDATA[SELECT *
+FROM dbo.fn_GetUserWiseClosedTickets($P{UserId}, $P{FromDate}, $P{ToDate});
+]]></query>
+	<field name="ticket_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_id"/>
+	</field>
+	<field name="ticket_number" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_number"/>
+	</field>
+	<field name="ticket_title" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_title"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_title"/>
+	</field>
+	<field name="status_priority" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status_priority"/>
+		<property name="com.jaspersoft.studio.field.label" value="status_priority"/>
+	</field>
+	<field name="ticket_priority" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_priority"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_priority"/>
+	</field>
+	<field name="ticket_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_status"/>
+	</field>
+	<field name="closed_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="closed_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="closed_date"/>
+	</field>
+	<field name="closed_time" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="closed_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="closed_time"/>
+	</field>
+	<field name="created_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="created_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_date"/>
+	</field>
+	<field name="created_time" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="created_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_time"/>
+	</field>
+	<field name="resolved_dt" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="resolved_dt"/>
+		<property name="com.jaspersoft.studio.field.label" value="resolved_dt"/>
+	</field>
+	<field name="product" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="product"/>
+		<property name="com.jaspersoft.studio.field.label" value="product"/>
+	</field>
+	<field name="ticket_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ticket_type"/>
+		<property name="com.jaspersoft.studio.field.label" value="ticket_type"/>
+	</field>
+	<field name="closed_by_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="closed_by_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="closed_by_id"/>
+	</field>
+	<field name="closed_by_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="closed_by_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="closed_by_name"/>
+	</field>
+	<field name="employee_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="employee_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="employee_name"/>
+	</field>
+	<field name="assigned_to_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="assigned_to_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="assigned_to_id"/>
+	</field>
+	<field name="assigned_to_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assigned_to_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="assigned_to_name"/>
+	</field>
+	<field name="assigned_to_employee" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assigned_to_employee"/>
+		<property name="com.jaspersoft.studio.field.label" value="assigned_to_employee"/>
+	</field>
+	<field name="from_department_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="from_department_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="from_department_name"/>
+	</field>
+	<field name="to_department_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="to_department_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="to_department_name"/>
+	</field>
+	<field name="tat_hours" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tat_hours"/>
+		<property name="com.jaspersoft.studio.field.label" value="tat_hours"/>
+	</field>
+	<field name="resolution_hours" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="resolution_hours"/>
+		<property name="com.jaspersoft.studio.field.label" value="resolution_hours"/>
+	</field>
+	<field name="ageing_days" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="ageing_days"/>
+		<property name="com.jaspersoft.studio.field.label" value="ageing_days"/>
+	</field>
+	<variable name="GroupSNo" resetType="Group" calculation="Count" resetGroup="userGroup" class="java.lang.Integer">
+		<expression><![CDATA[$F{ticket_number}]]></expression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="userGroup">
+		<expression><![CDATA[$F{employee_name}]]></expression>
+		<groupHeader>
+			<band height="25">
+				<element kind="textField" uuid="6ec2b58e-d4ae-4cd4-97a3-656dd5f4eb5e" x="0" y="5" width="200" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+					<expression><![CDATA[($F{employee_name} == null ? "" : $F{employee_name}) +
+" - " +
+($F{closed_by_name} == null ? "" : $F{closed_by_name})
+]]></expression>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<element kind="textField" uuid="574bcbef-3ba5-41cc-8f41-e38fca64e7fa" x="433" y="0" width="122" height="20" bold="true" hTextAlign="Right" vTextAlign="Middle">
+					<expression><![CDATA["Sub-total - " +$F{closed_by_name} + " : "+ $V{userGroup_COUNT}]]></expression>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<box>
+						<pen lineWidth="1.5"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background height="50" splitType="Stretch"/>
+	<title height="30" splitType="Stretch">
+		<element kind="staticText" uuid="6596de15-40a2-45cb-88d3-1d22e9a0972b" x="0" y="0" width="555" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[VIJAYA MEDICAL AND EDUCATIONAL TRUST
+Ticket Report (User Wise - Consolidated)]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+	</title>
+	<pageHeader height="20" splitType="Stretch">
+		<element kind="textField" uuid="a0ede3be-6459-4498-9f56-c4414414d68d" x="0" y="0" width="555" height="20" textAdjust="ScaleFont" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{to_department_name} + " - From : " + $P{FromDate} + " To : " + $P{ToDate}]]></expression>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+	</pageHeader>
+	<columnHeader height="20" splitType="Stretch">
+		<element kind="staticText" uuid="b97d5cc9-ca36-4962-a62d-d0077b2c0355" x="35" y="0" width="50" height="20" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Created Dt]]></text>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<pen lineWidth="1.5"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="c2580309-c14e-41db-8216-4f211edd3b2b" x="290" y="0" width="140" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Ticket Title]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5935dee1-5381-4c04-bc45-49ee3d425fe1"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box>
+				<pen lineWidth="1.5" lineStyle="Solid"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="24be744c-070b-4c7b-b822-e35b6dfa4411" x="90" y="0" width="110" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[From Dept]]></text>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box>
+				<pen lineWidth="1.5"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="b3cc33f7-14e5-40e0-b2ca-cdac6734df17" x="205" y="0" width="80" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Ticket No]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7fb251a4-3765-4dd7-83a0-2927fec1a520"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box>
+				<pen lineWidth="1.5" lineStyle="Solid"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="e116d3cd-ad67-4387-a639-ab854572aa7b" x="0" y="0" width="30" height="20" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[S.No]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<pen lineWidth="1.5"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="3f622f5e-d20e-409a-9807-676ad5dc5e68" x="435" y="0" width="60" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Status/Priority]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5935dee1-5381-4c04-bc45-49ee3d425fe1"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box>
+				<pen lineWidth="1.5" lineStyle="Solid"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="9ca74e54-0911-4aff-9509-8c61ad35999a" x="500" y="0" width="50" height="20" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Closed Dt]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1cd6ec8-3117-475b-a438-184144f16999"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box>
+				<pen lineWidth="1.5" lineStyle="Solid"/>
+				<topPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<element kind="textField" uuid="7a5971c2-c1fb-4ee6-ab34-8cbd30d7eea6" x="290" y="0" width="140" height="20" fontSize="8.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" vTextAlign="Middle">
+				<expression><![CDATA[$F{ticket_title}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="9a094af3-b8cc-4d5a-ba77-88132671ba08" x="35" y="0" width="50" height="20" fontSize="8.0" pattern="dd/MM/yyyy" vTextAlign="Middle">
+				<expression><![CDATA[$F{created_date}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="c4e8a9eb-ea8c-4b67-865b-000bba5beb6b" x="90" y="0" width="110" height="20" fontSize="8.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{from_department_name}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="d6b58788-af10-4cb4-9c36-ede912f88fcc" x="0" y="0" width="30" height="20" fontSize="8.0" vTextAlign="Middle">
+				<expression><![CDATA[$V{GroupSNo}]]></expression>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="c1a7cec8-fa16-4d2f-bfeb-88d5e30c8c26" x="205" y="0" width="80" height="20" fontSize="8.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{ticket_number}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			</element>
+			<element kind="textField" uuid="69f5e744-8e50-430a-b3f4-2dc04310e92a" x="500" y="0" width="50" height="20" fontSize="8.0" textAdjust="ScaleFont" pattern="dd/MM/yyy" vTextAlign="Middle">
+				<expression><![CDATA[$F{closed_date}]]></expression>
+				<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			</element>
+			<element kind="textField" uuid="812015d7-0173-45b4-be4f-a6550f8d76de" x="435" y="0" width="60" height="20" fontSize="8.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{status_priority}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="25" splitType="Stretch">
+		<element kind="textField" uuid="235b1ef2-6473-49c5-8e95-df5be10aca69" x="0" y="0" width="278" height="25" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</element>
+		<element kind="textField" uuid="a9784902-f1a9-40da-947a-26fbe581bbe6" x="278" y="0" width="277" height="25" fontSize="8.0" evaluationTime="Report" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[" of " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</pageFooter>
+	<summary height="30" splitType="Stretch">
+		<element kind="textField" uuid="bbde3c4c-4a07-4145-ab0b-106d7db54de7" positionType="FixRelativeToBottom" x="0" y="0" width="555" height="30" bold="true" hTextAlign="Right" vTextAlign="Bottom">
+			<expression><![CDATA["Grand Total : " + $V{REPORT_COUNT}]]></expression>
+			<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+			<box>
+				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</summary>
+</jasperReport>

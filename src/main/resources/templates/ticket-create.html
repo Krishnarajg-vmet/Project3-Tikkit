@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Ticket - Tikkit</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <style>
+        html, body {height: 100%; margin: 0; padding: 0; overflow-x: hidden;}
+        body {background: #f7f9fb; font-size: 13px;}
+        body.dark-mode {background: #1e1e1e; color: #e0e0e0;}
+        .navbar-custom {padding: 0.5rem 1rem; background-color: #0d6efd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; position: fixed; top: 0; z-index: 1050; color: #fff; display: flex; align-items: center;}
+        .navbar-custom .navbar-brand {font-weight: 700; color: #fff; user-select: none; display: flex; align-items: center;}
+        .navbar-custom .navbar-brand img {height: 30px; margin-right: 8px;}
+        .navbar-custom .btn, .navbar-custom input {font-size: 12px;}
+        footer {background-color: #f1f1f1; color: #333; text-align: center; padding: 8px; position: fixed; bottom: 0; width: 100%; box-shadow: 0 -1px 5px rgba(0,0,0,0.1); font-size: 12px; user-select: none; z-index: 1050;}
+        body.dark-mode footer {background: #222; color: #aaa;}
+        .page-container {background: white; margin: 10px; padding: 10px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); min-height: calc(100vh - 60px - 50px);}
+        .form-label {font-weight: 600; margin-bottom: 2px;}
+        .input-group-text {background: #e9ecef;}
+        .section-title {background: #f1f5f9; padding: 8px 12px; border-left: 3px solid #0D6EFD; margin-bottom: 15px; font-weight: 600;}
+        .search-popup {position: fixed; top: 15%; left: 50%; transform: translateX(-50%); width: 500px; background: white; border-radius: 6px; padding: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 9999; display: none;}
+        .container {max-width: 1400px; margin: 50px auto;}
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" onclick="window.location.href='/view/home'">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      Tikkit
+    </a>
+
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
+
+    <div class="ms-auto d-flex gap-2 align-items-center">
+     <span><strong>Logged in User:</strong> KRISHNARAJ G</span>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-container">
+
+    <h5 class="section-title">New Ticket</h5>
+
+    <form id="ticketForm">
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <label class="form-label">Ticket Title</label>
+                <input type="text" id="ticketTitle" class="form-control form-control-sm" required>
+            </div> 
+            <div class="col-md-6">
+                <label class="form-label">Complaint List</label>
+                <div class="input-group input-group-sm">
+                    <input type="hidden" id="complaintId">
+                    <input type="text" id="complaintName" class="form-control" readonly placeholder="Select Complaint">
+                    <button class="btn btn-outline-secondary" type="button" onclick="openComplaintPopup()">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+        	<div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select id="ticketStatus" class="form-select form-select-sm" disabled></select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Priority</label>
+                <select id="ticketPriority" class="form-select form-select-sm"></select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ticket Type</label>
+                <select id="ticketType" class="form-select form-select-sm"></select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Product</label>
+                <select id="product" class="form-select form-select-sm"></select>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <label class="form-label">From Department</label>
+                <select id="fromDepartmentId" class="form-select form-select-sm"></select>
+            </div>
+            <div class="col-md-3">
+			    <label class="form-label">To Department</label>
+			    <select id="toDepartmentId" class="form-select form-select-sm"></select>
+			</div>
+
+            <div class="col-md-3">
+                <label class="form-label">Created By</label>
+                <input type="text" id="createdByName" class="form-control form-control-sm" disabled>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Attach File</label>
+                <input type="file" class="form-control form-control-sm">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Ticket Description</label>
+            <div id="quillEditor" style="height: 220px; background: white;"></div>
+            <input type="hidden" id="description" name="description">
+        </div>
+		<button class="btn btn-primary btn-sm fw-bold" onclick="submitTicket()">Save</button>
+		<button class="btn btn-primary btn-sm fw-bold" onclick="clearForm()">Clear</button>
+    </form>
+
+</div>
+</div>
+
+<div id="complaintPopup" class="search-popup">
+    <h6 class="fw-bold mb-2">Select Complaint</h6>
+    <input type="text" id="searchComplaintInput" class="form-control form-control-sm mb-2" placeholder="Search complaint...">
+    <div style="max-height:200px; overflow-y:auto;">
+        <ul id="complaintList" class="list-group list-group-sm"></ul>
+    </div>
+    <button class="btn btn-secondary btn-sm mt-2 w-100" onclick="closeComplaintPopup()">Close</button>
+</div>
+
+<!-- Success & Failure Modals -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Ticket Created Successfully</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="successModalBody"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div></div>
+</div>
+
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="failureModalLabel">Error Creating Ticket</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="failureModalBody"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div></div>
+</div>
+
+<footer>
+<p><strong>&copy; 2025 Tikkit</strong> </p>       
+</footer>
+
+<script th:inline="none">
+function clearForm() {
+    // Reset the form fields (standard HTML input elements)
+    document.getElementById("ticketForm").reset();
+
+    // Clear the Quill editor content
+    if (quill) {
+        quill.root.innerHTML = ''; // or quill.setContents([]); 
+    }
+
+    // Reset any additional UI elements (if needed)
+    document.getElementById("complaintId").value = '';
+    document.getElementById("complaintName").value = '';
+    document.getElementById("description").value = '';
+
+    // Reset department selects
+    const fromDeptSelect = document.getElementById("fromDepartmentId");
+
+    if (fromDeptSelect) fromDeptSelect.selectedIndex = 0;
+}
+
+let quill;
+document.addEventListener("DOMContentLoaded", function() {
+    quill = new Quill("#quillEditor", {
+        theme: "snow",
+        placeholder: "Write update...",
+        modules: { 
+            toolbar: [
+                ["bold","italic","underline"], 
+                [{list:"ordered"},{list:"bullet"}],
+                [{align:[]}],
+                [{color:[]}],
+                ["clean"]
+            ] 
+        }
+    });
+
+    quill.root.style.height = '80px';
+    quill.root.style.overflowY = 'auto';
+});
+
+const darkToggle = document.getElementById("darkToggle");
+darkToggle.addEventListener("change", () => document.body.classList.toggle("dark-mode"));
+
+async function loadEnums() {
+    const priorities = await fetch("/api/enums/ticketPriority").then(r => r.json());
+    priorities.forEach(p => document.getElementById("ticketPriority").innerHTML += `<option value="${p.name}">${p.label}</option>`);
+
+    const types = await fetch("/api/enums/ticketType").then(r => r.json());
+    types.forEach(t => document.getElementById("ticketType").innerHTML += `<option value="${t.name}">${t.label}</option>`);
+
+    const statuses = await fetch("/api/enums/ticketStatus").then(r => r.json());
+    statuses.forEach(s => document.getElementById("ticketStatus").innerHTML += `<option value="${s.name}">${s.label}</option>`);
+}
+
+async function loadProducts() {
+    const products = await fetch("/api/enums/products").then(r => r.json());
+    products.forEach(p => document.getElementById("product").innerHTML += `<option value="${p.name}">${p.label}</option>`);
+}
+
+async function loadDepartments() {
+    const depts = await fetch("/api/departments").then(r => r.json());
+    const from = document.getElementById("fromDepartmentId");
+    const to = document.getElementById("toDepartmentId");
+
+    // Populate "from" with all departments
+    from.innerHTML = "";
+    depts.forEach(d => {
+        from.innerHTML += `<option value="${d.departmentId}">${d.departmentName}</option>`;
+    });
+
+    // Populate "to" with all departments, but select user's department later
+    to.innerHTML = "";
+    depts.forEach(d => {
+        to.innerHTML += `<option value="${d.departmentId}">${d.departmentName}</option>`;
+    });
+}
+
+
+async function loadCurrentUser() {
+    try {
+        const user = await fetch("/api/users/current").then(r => r.json());
+        let employeename = user.firstName + " " + user.lastName;
+	      document.getElementById("employeeName").textContent = employeename;
+        document.getElementById('createdByName').value = user.userName;
+
+        const toDeptSelect = document.getElementById('toDepartmentId');
+        if (toDeptSelect) {
+            const userDeptOption = Array.from(toDeptSelect.options).find(o => o.value == user.departmentId);
+            if (userDeptOption) {
+                toDeptSelect.value = user.departmentId;
+                toDeptSelect.disabled = true;
+            } else {
+                console.warn("User's department not found in dropdown");
+            }
+        }
+    } catch (err) {
+        console.error('Error fetching current user', err);
+        document.getElementById('createdByName').value = 'Unknown User';
+    }
+}
+
+function openComplaintPopup() {
+    document.getElementById("complaintPopup").style.display = "block";
+    fetch("/api/complaints")
+        .then(r => r.json())
+        .then(list => {
+            const ul = document.getElementById("complaintList");
+            ul.innerHTML = "";
+            list.forEach(c => {
+                const safeName = c.complaintName.replace(/'/g, "\\'").replace(/\$/g, "\\$");
+                ul.innerHTML += `<li class="list-group-item list-group-item-action" onclick="selectComplaint(${c.complaintId}, '${safeName}')">${c.complaintName}</li>`;
+            });
+        });
+}
+
+function selectComplaint(id, name) {
+    document.getElementById("complaintId").value = id;
+    document.getElementById("complaintName").value = name;
+    closeComplaintPopup();
+}
+
+function closeComplaintPopup() { document.getElementById("complaintPopup").style.display = "none"; }
+
+function updateDescriptionField() { document.getElementById('description').value = quill.root.innerHTML; }
+
+async function submitTicket() {
+    updateDescriptionField();
+    const dto = {
+        ticketTitle: document.getElementById("ticketTitle").value,
+        description: document.getElementById("description").value,
+        ticketType: document.getElementById("ticketType").value,
+        ticketPriority: document.getElementById("ticketPriority").value,
+        product: document.getElementById("product").value,
+        complaintId: document.getElementById("complaintId").value || null,
+        fromDepartmentId: document.getElementById("fromDepartmentId").value,
+        toDepartmentId: document.getElementById("toDepartmentId").value
+    };
+
+    try {
+        const resp = await fetch("/api/tickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dto)
+        });
+        const ticket = await resp.json();
+
+        if (ticket && ticket.ticketId) {
+            document.getElementById("successModalBody").innerHTML = `
+                <p><strong>Ticket Number:</strong> ${ticket.ticketNumber}</p>
+                <p><strong>Title:</strong> ${ticket.ticketTitle}</p>
+                <p><strong>Status:</strong> ${ticket.ticketStatus}</p>
+                <p><strong>Priority:</strong> ${ticket.ticketPriority}</p>
+                <p><strong>Type:</strong> ${ticket.ticketType}</p>
+                <p><strong>Complaint:</strong> ${ticket.complaintName || '-'}</p>
+                <p><strong>Product:</strong> ${ticket.product}</p>
+                <p><strong>From Department:</strong> ${ticket.fromDepartmentName}</p>
+                <p><strong>To Department:</strong> ${ticket.toDepartmentName}</p>
+            `;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+            document.getElementById("ticketForm").reset();
+            quill.root.innerHTML = '';
+        } else {
+            throw new Error("Ticket ID missing in response");
+        }
+    } catch(err) {
+        console.error(err);
+        document.getElementById("failureModalBody").innerHTML = `<p>There was an error while creating the ticket.</p>`;
+        new bootstrap.Modal(document.getElementById('failureModal')).show();
+    }
+    
+    clearForm();
+}
+
+document.getElementById("btnLogout").addEventListener("click", async function() {
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    await fetch('/logout', { method: 'POST', headers: { [csrfHeader]: csrfToken } });
+    window.location.href = '/login';
+});
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadEnums();
+    await loadProducts();
+    await loadDepartments();
+    await loadCurrentUser();
+});
+function logout() {
+    window.location.href = "/logout";
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

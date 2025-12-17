@@ -7,6 +7,7 @@ public enum TicketStatus {
 	IN_PROGRESS("In Progress"),
 	RE_OPEN("Re-Open"),
 	RESOLVED("Resolved"),
+	TO_BE_DISCUSSED("To be discussed"),
 	CLOSED("Closed");
 	
 	private final String label;
@@ -15,7 +16,7 @@ public enum TicketStatus {
 		this.label = label;
 	}
 	
-	public String getLable() {
+	public String getLabel() {
 		return label;
 	}
 	

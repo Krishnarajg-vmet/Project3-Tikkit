@@ -6,6 +6,8 @@ public class UserDto {
 	
 	private Long userId;
 	private String userName;
+	private String password;
+	private Boolean passwordResetRequired;
 	
 	private Long employeeId;
 	private String firstName;
@@ -29,6 +31,18 @@ public class UserDto {
 	}
 	public String getUserName() {
 		return userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public Boolean getPasswordResetRequired() {
+		return passwordResetRequired;
+	}
+	public void setPasswordResetRequired(Boolean passwordResetRequired) {
+		this.passwordResetRequired = passwordResetRequired;
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tikkit Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        /* Base Styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #f7f9fb;
+            font-size: 13px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .left-menu,
+        body.dark-mode .criteria-box {
+            background: #2b2b2b;
+            border-color: #555;
+            color: #aaa;
+        }
+        body.dark-mode .navbar-custom {
+            background-color: #222 !important;
+            color: #aaa;
+        }
+        body.dark-mode footer {
+            background: #222;
+            color: #aaa;
+        }
+        body.dark-mode .left-menu a {
+            color: #ddd !important;
+        }
+        body.dark-mode .left-menu a.active {
+            color: #ddd !important;
+        }
+        body.dark-mode .left-menu a:hover {
+            color: #555 !important;
+        }
+        body.dark-mode .date-dropdown,
+        body.dark-mode .date-submenu {
+            background: #3a3a3a;
+            border-color: #555;
+            color: #ddd;
+        }
+        body.dark-mode .date-dropdown div:hover,
+        body.dark-mode .date-submenu div:hover {
+            background: #555;
+        }
+        body.dark-mode .search-list {
+            background: #3a3a3a;
+            border-color: #555;
+            color: #ddd;
+        }
+        body.dark-mode .search-list div:hover {
+            background: #555;
+        }
+        body.dark-mode .right-title {
+            border-left-color: #ddd;
+            color: #ddd;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            padding: 0.5rem 1rem;
+            background-color: #0D6EFD;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Breadcrumb & Footer */
+        .breadcrumb-bar {
+            margin-top: 60px;
+            padding: 8px 16px;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+        footer {
+            background-color: #f1f1f1;
+            color: #333;
+            text-align: center;
+            padding: 8px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Layout */
+        .main-container {
+            position: absolute;
+            top: 50px;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+        }
+
+        /* Left Menu */
+        .left-menu {
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .left-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .left-menu a.active {
+            background: #0D6EFD;
+            color: white !important;
+        }
+        .left-menu a:hover {
+            background: #dce9ff;
+        }
+
+        /* Right Content */
+        .criteria-box {
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            margin: 8px;
+        }
+        .right-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0D6EFD;
+            margin-bottom: 15px;
+            border-left: 4px solid #0D6EFD;
+            padding-left: 10px;
+        }
+        .top-right-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        /* Date Dropdown */
+        .date-dropdown {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 220px;
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            display: none;
+            padding: 5px 0;
+        }
+        .date-dropdown div {
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+        .date-dropdown div:hover {
+            background: #e9f2ff;
+        }
+
+        /* Date Submenu */
+        .date-submenu {
+            position: absolute;
+            top: 0;
+            left: 220px;
+            display: none;
+            width: 260px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2001;
+        }
+
+        /* Search List */
+        .search-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 3000;
+            display: none;
+        }
+        .search-list div {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+        .search-list div:hover {
+            background: #e9f2ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand fw-bold text-white">Tikkit - Report</a>
+        <div class="form-check form-switch text-white ms-3">
+            <input class="form-check-input" type="checkbox" id="darkToggle">
+            <label class="form-check-label">Dark Mode</label>
+        </div>
+        <div class="ms-auto d-flex gap-3 align-items-center">
+        	<button class="btn btn-outline-light btn-sm me-2" onclick="window.location.href='/view/home'">Home</button>
+            <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+            <button class="btn btn-outline-light btn-sm" id="btnDashboard" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+            <i class="bi bi-bell text-white"></i>
+            <i class="bi bi-person-circle text-white"></i>
+            <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <!-- LEFT MENU -->
+                <div class="col-3 left-menu">
+                    <h6 class="fw-bold">Selection Type</h6>
+                    <a href="#" class="report-type active" data-type="DETAILED" data-title="User Wise Detailed">User Wise Detailed</a>
+                    <a href="#" class="report-type" data-type="CONSOLIDATED" data-title="User Wise Consolidated">User Wise Consolidated</a>
+                    <a href="#" class="report-type" data-type="DEPT" data-title="Department Wise">Department Wise</a>
+                    <a href="#" class="report-type" data-type="SUMMARY" data-title="Summary Report">Summary Report</a>
+                </div>
+
+                <!-- RIGHT GRID -->
+                <div class="col-9">
+                    <div class="criteria-box">
+                        <h4 class="right-title" id="report-title">User Wise Detailed</h4>
+                        <div class="top-right-buttons">
+                            <button class="btn btn-primary btn-sm" id="btnPrint">Print</button>
+                            <button class="btn btn-primary btn-sm" id="btnClear">Clear</button>
+                        </div>
+
+                        <form id="reportForm" class="mt-4">
+                            <div class="row mb-3">
+                                <!-- DATE PICKER -->
+                                <div class="col-md-4 position-relative">
+                                    <label class="form-label">Select Date</label>
+                                    <input type="text" id="dateMaster" class="form-control" readonly>
+                                    <div id="dateMenu" class="date-dropdown">
+                                        <div data-type="today">Today</div>
+                                        <div data-type="yesterday">Yesterday</div>
+                                        <div data-type="last7">Last 7 days</div>
+                                        <div data-type="monthToDate">Month to date</div>
+                                        <div data-type="yearToDate">Year to date</div>
+                                        <div data-type="prevMonth">Previous Month</div>
+                                        <div data-type="prevYear">Previous Year</div>
+                                        <div id="specificDateBtn">Specific Date ▸</div>
+                                        <div id="dateRangeBtn">Date Range ▸</div>
+                                    </div>
+                                    <div id="specificDateMenu" class="date-submenu">
+                                        <label>Select Date:</label>
+                                        <input type="date" id="specificCalendar" class="form-control mt-1">
+                                        <button class="btn btn-primary btn-sm mt-2" id="applySpecificDate">Apply</button>
+                                    </div>
+                                    <div id="dateRangeMenu" class="date-submenu">
+                                        <label>From:</label>
+                                        <input type="date" id="rangeFrom" class="form-control">
+                                        <label class="mt-2">To:</label>
+                                        <input type="date" id="rangeTo" class="form-control">
+                                        <button class="btn btn-primary btn-sm mt-2" id="applyRange">Apply</button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="fromDate" name="fromDate">
+                                <input type="hidden" id="toDate" name="toDate">
+
+                                <!-- USER SEARCH -->
+                                <div class="col-md-6 position-relative">
+                                    <label class="form-label mandatory">User</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search User" id="userSearch" autocomplete="off">
+                                        <input type="hidden" id="userIdHidden">
+                                    </div>
+                                    <div id="userList" class="search-list"></div>
+                                </div>
+
+                                <!-- DEPARTMENT SEARCH -->
+                                <div class="col-md-6 position-relative">
+                                    <label class="form-label mandatory">Department</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search Department" id="department" autocomplete="off">
+                                        <input type="hidden" id="departmentId">
+                                    </div>
+                                    <div id="departmentList" class="search-list"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>Tikkit Dashboard © 2025 — Suvarna Technosoft Pvt Ltd</footer>
+
+    <script>
+        // ===== DARK MODE =====
+        document.getElementById("darkToggle").addEventListener("change", function () {
+            document.body.classList.toggle("dark-mode");
+        });
+
+        // ===== DATE PICKER LOGIC =====
+        function formatDate(d) {
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            return d.getDate().toString().padStart(2, '0') + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+        }
+
+        window.onload = () => {
+            document.getElementById("dateMaster").value = formatDate(new Date());
+        };
+
+        // ===== DATE MENU HANDLING =====
+        const dateMaster = document.getElementById("dateMaster");
+        const menu = document.getElementById("dateMenu");
+        const specificMenu = document.getElementById("specificDateMenu");
+        const rangeMenu = document.getElementById("dateRangeMenu");
+
+        dateMaster.addEventListener("click", () => {
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            specificMenu.style.display = 'none';
+            rangeMenu.style.display = 'none';
+        });
+
+        menu.querySelectorAll("div[data-type]").forEach(item => {
+            item.addEventListener("click", () => {
+                let from, to;
+                const now = new Date();
+                switch (item.dataset.type) {
+                    case "today":
+                        from = to = now;
+                        break;
+                    case "yesterday":
+                        from = to = new Date(now - 86400000);
+                        break;
+                    case "last7":
+                        from = new Date(now - 6 * 86400000);
+                        to = now;
+                        break;
+                    case "monthToDate":
+                        from = new Date(now.getFullYear(), now.getMonth(), 1);
+                        to = now;
+                        break;
+                    case "yearToDate":
+                        from = new Date(now.getFullYear(), 0, 1);
+                        to = now;
+                        break;
+                    case "prevMonth":
+                        let y = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+                        let m = (now.getMonth() - 1 + 12) % 12;
+                        from = new Date(y, m, 1);
+                        to = new Date(y, m + 1, 0);
+                        break;
+                    case "prevYear":
+                        from = new Date(now.getFullYear() - 1, 0, 1);
+                        to = new Date(now.getFullYear() - 1, 11, 31);
+                        break;
+                }
+                document.getElementById("fromDate").value = from.toISOString().slice(0, 10);
+                document.getElementById("toDate").value = to.toISOString().slice(0, 10);
+                dateMaster.value = formatDate(from) + " → " + formatDate(to);
+                menu.style.display = 'none';
+            });
+        });
+
+        document.getElementById("specificDateBtn").addEventListener("click", () => {
+            specificMenu.style.display = 'block';
+            rangeMenu.style.display = 'none';
+        });
+
+        document.getElementById("applySpecificDate").addEventListener("click", e => {
+            e.preventDefault();
+            let d = new Date(document.getElementById("specificCalendar").value);
+            document.getElementById("fromDate").value = d.toISOString().slice(0, 10);
+            document.getElementById("toDate").value = d.toISOString().slice(0, 10);
+            dateMaster.value = formatDate(d);
+            menu.style.display = 'none';
+            specificMenu.style.display = 'none';
+        });
+
+        document.getElementById("dateRangeBtn").addEventListener("click", () => {
+            specificMenu.style.display = 'none';
+            rangeMenu.style.display = 'block';
+        });
+
+        document.getElementById("applyRange").addEventListener("click", e => {
+            e.preventDefault();
+            const f = new Date(document.getElementById("rangeFrom").value);
+            const t = new Date(document.getElementById("rangeTo").value);
+            document.getElementById("fromDate").value = f.toISOString().slice(0, 10);
+            document.getElementById("toDate").value = t.toISOString().slice(0, 10);
+            dateMaster.value = formatDate(f) + " → " + formatDate(t);
+            menu.style.display = 'none';
+            rangeMenu.style.display = 'none';
+        });
+
+        // ===== LEFT MENU SELECTION =====
+        let selectedReportType = "DETAILED";
+        document.querySelectorAll(".report-type").forEach(item => {
+            item.addEventListener("click", function (e) {
+                e.preventDefault();
+                document.querySelectorAll(".report-type").forEach(a => a.classList.remove("active"));
+                this.classList.add("active");
+                selectedReportType = this.dataset.type;
+                document.getElementById("report-title").innerText = this.dataset.title;
+            });
+        });
+
+        // ===== REPORT BUTTONS =====
+        document.getElementById("btnPrint").addEventListener("click", () => {
+            const userId = document.getElementById("userIdHidden").value || null;
+            const from = document.getElementById("fromDate").value;
+            const to = document.getElementById("toDate").value;
+
+            if (!from || !to) {
+                alert("Please fill all fields before generating report.");
+                return;
+            }
+
+            let endpoint;
+            switch (selectedReportType) {
+                case "DETAILED":
+                    endpoint = "/api/reports/user-wise-tickets/detailed-report";
+                    break;
+                case "CONSOLIDATED":
+                    endpoint = "/api/reports/user-wise-tickets/consolidated-report";
+                    break;
+                case "DEPT":
+                    endpoint = "/api/reports/department-wise";
+                    break;
+                case "SUMMARY":
+                    endpoint = "/api/reports/summary";
+                    break;
+            }
+            window.open(`${endpoint}?userId=${userId}&fromDate=${from}&toDate=${to}`, "_blank");
+        });
+
+        document.getElementById("btnClear").addEventListener("click", () => {
+            document.getElementById("reportForm").reset();
+            document.getElementById("dateMaster").value = formatDate(new Date());
+        });
+
+        // ===== CLOSE DATE MENUS ON OUTSIDE CLICK =====
+        document.addEventListener("mousedown", function (e) {
+            if (!dateMaster.contains(e.target) && !menu.contains(e.target) && 
+                !specificMenu.contains(e.target) && !rangeMenu.contains(e.target)) {
+                menu.style.display = "none";
+                specificMenu.style.display = "none";
+                rangeMenu.style.display = "none";
+            }
+        });
+
+        // ===== DEPARTMENT SEARCH =====
+        const deptInput = document.getElementById("department");
+        const deptList = document.getElementById("departmentList");
+        const deptHidden = document.getElementById("departmentId");
+
+        deptInput.addEventListener("input", async () => {
+            const query = deptInput.value.trim();
+            if (!query) {
+                deptList.style.display = 'none';
+                return;
+            }
+
+            const resp = await fetch('/api/departments');
+            const depts = await resp.json();
+            deptList.innerHTML = '';
+
+            depts.filter(d => d.departmentName.toLowerCase().includes(query.toLowerCase()))
+                .forEach(d => {
+                    const div = document.createElement('div');
+                    div.textContent = d.departmentName;
+                    div.dataset.id = d.departmentId;
+                    div.addEventListener('click', () => {
+                        deptInput.value = d.departmentName;
+                        deptHidden.value = d.departmentId;
+                        deptList.style.display = 'none';
+                        document.getElementById("userSearch").value = '';
+                        document.getElementById("userIdHidden").value = '';
+                    });
+                    deptList.appendChild(div);
+                });
+
+            deptList.style.display = deptList.children.length ? 'block' : 'none';
+        });
+
+        document.addEventListener("click", e => {
+            if (!deptInput.contains(e.target) && !deptList.contains(e.target))
+                deptList.style.display = 'none';
+        });
+
+        // ===== USER SEARCH =====
+        const userInput = document.getElementById("userSearch");
+        const userList = document.getElementById("userList");
+        const userHidden = document.getElementById("userIdHidden");
+
+        userInput.addEventListener("input", async () => {
+            const q = userInput.value.trim();
+            const deptId = deptHidden.value;
+
+            if (!q) {
+                userList.style.display = 'none';
+                return;
+            }
+
+            let url = '/api/users';
+            const params = [];
+            if (q) params.push('search=' + encodeURIComponent(q));
+            if (deptId) params.push('departmentId=' + encodeURIComponent(deptId));
+            if (params.length) url += '?' + params.join('&');
+
+            const resp = await fetch(url);
+            const users = await resp.json();
+            userList.innerHTML = '';
+
+            users.forEach(u => {
+                const div = document.createElement('div');
+                div.textContent = u.userName;
+                div.dataset.id = u.userId;
+                div.addEventListener('click', () => {
+                    userInput.value = u.userName;
+                    userHidden.value = u.userId;
+                    userList.style.display = 'none';
+                });
+                userList.appendChild(div);
+            });
+
+            userList.style.display = users.length ? 'block' : 'none';
+        });
+
+        document.addEventListener("click", e => {
+            if (!userInput.contains(e.target) && !userList.contains(e.target))
+                userList.style.display = 'none';
+        });
+
+        function logout() {
+            window.location.href = "/logout";
+        }
+    </script>
+</body>
+</html>

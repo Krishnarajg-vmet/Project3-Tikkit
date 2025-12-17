@@ -13,6 +13,61 @@
       background-color: #f5f5f5;
       font-size: 12px;
     }
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .navbar-custom .btn, .navbar-custom input {
+      font-size: 12px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -42,29 +97,35 @@
       padding: 2px 6px;
       font-size: 11px;
     }
+    .container {
+      padding: 60px 16px 50px; /* leave space for navbar + footer */
+      max-width: 1000px;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3">
-  <a class="navbar-brand d-flex align-items-center" href="#">
-    <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
-    <span>Tikkit</span>
-  </a>
+<nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" href="#">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      Tikkit
+    </a>
 
-  <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
-    <li class="nav-item">
-      <a class="nav-link btn btn-outline-primary btn-sm px-3 ms-2" href="#">Home</a>
-    </li>
-    <li class="nav-item ms-3">
-      <input type="text" class="form-control search-input" placeholder="Search For Document ..." />
-    </li>
-  </ul>
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
 
-  <div class="d-flex align-items-center">
-    <button class="btn btn-outline-secondary btn-sm" title="Settings">B</button>
-  </div>
-</nav>
+    <div class="ms-auto d-flex gap-2 align-items-center">
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+      <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
 
 <div class="container mt-3">
   <div class="section-header">
@@ -94,8 +155,13 @@
     </table>
   </div>
 </div>
-
+<footer>Tikkit © 2025</footer>
 <script>
+//Dark Mode Toggle
+const darkToggle = document.getElementById("darkToggle");
+darkToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark-mode");
+});
   async function fetchDistricts() {
     try {
       const response = await fetch('/api/districts');
@@ -153,6 +219,9 @@
       }
     }
   }
+  function logout() {
+	    window.location.href = "/logout";
+	}
 
   window.onload = fetchDistricts;
 </script>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Complaints - Tikkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root { user-select: none; }
+    body { background-color: #f5f5f5; font-size: 12px; }
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .navbar-custom .btn, .navbar-custom input {
+      font-size: 12px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
+    .section-header { display: flex; justify-content: space-between; align-items: center; background: #f0f0f0; padding: 6px 12px; border: 1px solid #dee2e6; border-radius: 5px; font-weight: bold; font-size: 13px; margin: 10px 0; }
+    .search-input { width: 100%; font-size: 12px; height: 30px; padding: 4px 8px; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .table th, .table td { font-size: 12px; vertical-align: middle; }
+    .btn-action { padding: 2px 6px; font-size: 11px; }
+
+    .container {
+      display: flex;
+      padding: 60px 16px 50px; /* leave space for navbar + footer */
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .left-pane { flex: 1; background: white; padding: 15px; border: 1px solid #ddd; border-radius: 5px; min-width: 350px; max-width: 450px; height: calc(100vh - 110px); overflow-y: auto; }
+    .right-pane { flex: 2.5; background: white; padding: 15px; border: 1px solid #ddd; border-radius: 5px; height: calc(100vh - 110px); display: flex; flex-direction: column; }
+    .table-section { flex-grow: 1; display: flex; flex-direction: column; }
+    .table-responsive { flex-grow: 1; overflow: auto; }
+    .footer { position: fixed; bottom: 0; left: 0; width: 100%; font-size: 11px; user-select: none; box-shadow: 0 -1px 4px rgba(0,0,0,0.05); z-index: 1000; }
+
+    .form-control, .form-select { font-size: 12px; height: 30px; padding: 4px 8px; }
+    .form-label { font-size: 12px; margin-bottom: 4px; font-weight: 500; }
+    .mandatory::after { content: "*"; color: red; margin-left: 2px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" href="#">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      Tikkit
+    </a>
+
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
+
+    <div class="ms-auto d-flex gap-2 align-items-center">
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+      <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+<div class="container">
+
+  <form id="complaintForm" class="needs-validation" novalidate>
+  <div class="left-pane">
+    <div class="section-header">
+      <div>Complaint</div>
+      <div class="d-flex gap-2">
+        <button type="submit" id="btnSave" class="btn btn-success btn-sm flex-grow-1">Save</button>
+        <button type="button" id="btnUpdate" class="btn btn-primary btn-sm flex-grow-1" style="display: none;" onclick="updateComplaint()">Update</button>
+        <button type="button" onclick="resetForm()" class="btn btn-secondary btn-sm flex-grow-1">Clear</button>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <label for="complaintName" class="form-label mandatory">Complaint Name</label>
+      <input type="text" class="form-control form-control-sm" id="complaintName" name="complaintName" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="isActive" class="form-check-label me-2">
+        <input type="checkbox" class="form-check-input" id="isActive" name="isActive" checked />
+        Active
+      </label>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center">
+      <span class="text-danger me-2">* Indicates Mandatory Fields</span>
+    </div>
+
+  </div>
+  </form>
+
+  <div class="right-pane">
+    <div class="table-section">
+      <div class="section-header d-flex justify-content-between align-items-center">
+        <div>Complaint List</div>
+        <div>
+          <button id="btnGetData" class="btn btn-sm btn-primary">Get Data</button>
+        </div>
+      </div>
+
+      <div class="p-2 border-bottom bg-light">
+        <div class="row g-2">
+          <div class="col">
+            <input type="text" id="searchComplaint" class="form-control form-control-sm" placeholder="Search Complaint" />
+          </div>
+          <div class="col">
+            <input type="text" id="searchIsActive" class="form-control form-control-sm" placeholder="Search Active (A/I)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive flex-grow-1">
+        <table class="table table-bordered table-striped table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Complaint Name</th>
+              <th>Status</th>
+              <th style="width: 120px;">Manipulation</th>
+            </tr>
+          </thead>
+          <tbody id="complaintTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Tikkit © 2025</footer>
+<script>
+const darkToggle = document.getElementById("darkToggle");
+darkToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+const form = document.getElementById('complaintForm');
+const tbody = document.getElementById('complaintTableBody');
+let complaints = [];
+
+// Form submission for creating new complaint
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!form.checkValidity()) { 
+    form.classList.add('was-validated'); 
+    return; 
+  }
+
+  const data = getFormData();
+  try {
+    const method = form.dataset.complaintId ? 'PUT' : 'POST';
+    const url = form.dataset.complaintId ? `/api/complaints/${form.dataset.complaintId}` : '/api/complaints';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error('Failed to save complaint');
+
+    alert(`Complaint ${method === 'POST' ? 'saved' : 'updated'} successfully`);
+    resetForm();
+    fetchComplaints();
+  } catch (err) { 
+    alert(err.message); 
+  }
+});
+
+// Get form data
+function getFormData() {
+  return {
+    complaintName: form.complaintName.value.trim(),
+    isActive: form.isActive.checked
+  };
+}
+
+// Reset form
+function resetForm() {
+  form.reset();
+  form.dataset.complaintId = '';
+  form.classList.remove('was-validated');
+  form.isActive.checked = true;
+  document.getElementById('btnSave').style.display = 'inline-block';
+  document.getElementById('btnUpdate').style.display = 'none';
+}
+
+// Fetch complaints from API
+async function fetchComplaints() {
+  const searchParams = new URLSearchParams();
+  const name = document.getElementById('searchComplaint').value.trim();
+  if (name) searchParams.append('complaintName', name);
+  const isActiveVal = document.getElementById('searchIsActive').value.trim().toUpperCase();
+  if (isActiveVal === 'A') searchParams.append('isActive', 'true');
+  else if (isActiveVal === 'I') searchParams.append('isActive', 'false');
+
+  try {
+    const res = await fetch('/api/complaints?' + searchParams.toString());
+    if (!res.ok) throw new Error('Failed to fetch complaints');
+    complaints = await res.json();
+    renderComplaints();
+  } catch (err) { alert(err.message); }
+}
+
+// Render complaints table
+function renderComplaints() {
+  tbody.innerHTML = '';
+  complaints.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.complaintId}</td>
+      <td>${c.complaintName}</td>
+      <td>${c.isActive ? 'Active' : 'Inactive'}</td>
+      <td>
+        <button class="btn btn-sm btn-info btn-action" onclick="editComplaint(${c.complaintId})">E</button>
+        <button class="btn btn-sm btn-warning btn-action" onclick="toggleActive(${c.complaintId}, ${c.isActive})">
+          ${c.isActive ? 'I' : 'A'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Edit complaint
+async function editComplaint(id) {
+  try {
+    const res = await fetch(`/api/complaints/${id}`);
+    if (!res.ok) throw new Error('Complaint not found');
+    const c = await res.json();
+
+    form.dataset.complaintId = c.complaintId;
+    form.complaintName.value = c.complaintName || '';
+    form.isActive.checked = c.isActive;
+    document.getElementById('btnSave').style.display = 'none';
+    document.getElementById('btnUpdate').style.display = 'inline-block';
+  } catch (err) { alert(err.message); }
+}
+
+// Toggle active/inactive
+async function toggleActive(id, currentStatus) {
+  if (!confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this complaint?`)) return;
+  try {
+    const resGet = await fetch(`/api/complaints/${id}`);
+    if (!resGet.ok) throw new Error('Complaint not found');
+    const c = await resGet.json();
+    c.isActive = !currentStatus;
+
+    const resPut = await fetch(`/api/complaints/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(c)
+    });
+
+    if (!resPut.ok) throw new Error('Failed to update complaint status');
+    alert(`Complaint ${c.isActive ? 'activated' : 'deactivated'} successfully`);
+    fetchComplaints();
+  } catch (err) { alert(err.message); }
+}
+
+// Event listeners
+document.getElementById('btnGetData').addEventListener('click', fetchComplaints);
+
+// Initial load
+fetchComplaints();
+resetForm();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

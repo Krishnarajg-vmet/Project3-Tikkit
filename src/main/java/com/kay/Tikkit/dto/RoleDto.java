@@ -1,6 +1,7 @@
 package com.kay.Tikkit.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public class RoleDto {
 	
@@ -9,6 +10,7 @@ public class RoleDto {
 	private Boolean isActive;
 	private LocalDateTime createdDt;
 	private LocalDateTime modifiedDt;
+	private Set<PermissionDto> permissions;
 	
 	public Long getRoleId() {
 		return roleId;
@@ -40,7 +42,10 @@ public class RoleDto {
 	public void setModifiedDt(LocalDateTime modifiedDt) {
 		this.modifiedDt = modifiedDt;
 	}
-	
-	
-
+	public Set<PermissionDto> getPermissions() {
+		return permissions;
+	}
+	public void setPermissions(Set<PermissionDto> permissions) {
+		this.permissions = permissions;
+	}
 }

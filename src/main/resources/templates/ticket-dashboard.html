@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Dashboard - Tikkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="_csrf" content="${_csrf.token}" />
+	<meta name="_csrf_header" content="${_csrf.headerName}" />
+    <style>
+        :root {
+		    /* ===== COLORS ===== */
+		    --color-bg: #f3f6ff;               
+		    --color-surface: #ffffff;          
+		    --color-light-surface: #f8f9ff;    
+		    --color-border: #dbe1ff;           
+		    
+		    /* BADGE COLORS */
+		    --status-color: #6a5acd;
+            --status-open: #6a5acd;
+            --status-resolved: #6a5acd;
+            --status-closed: #6a5acd;
+            --status-reopen: #6a5acd;
+		    --priority-color: #ff6f61;         
+		    --users-color: #008cff;            
+		
+		    /* LEFT COLUMN */
+		    --left-col-bg: #5c7cfa;            
+		    --left-col-shadow: rgba(92, 124, 250, 0.45); 
+		
+		    /* TEXT COLORS */
+		    --text-main: #333;                 
+		    --text-light: #555;                
+		    --text-muted: #777;                
+		    --text-white: #fff;                
+		
+		    /* FONTS */
+		    --font-family-main: "Segoe UI", Calibri, sans-serif; 
+		    --font-size-xs: 10px;              
+		    --font-size-sm: 12px;              
+		
+		    /* RADIUS */
+		    --radius-sm: 8px;                  
+		    --radius-md: 10px;                 
+		    --radius-lg: 16px;                 
+		
+		    /* SHADOWS */
+		    --shadow-card: 0 1px 5px rgba(0,0,0,0.1);  
+		    --shadow-badge: 0 0 6px rgba(0,0,0,0.15);  
+		    --shadow-inset: inset 0 0 5px rgba(0,0,0,0.05); 
+		
+		    /* SPACING */
+		    --space-1: 4px;                    
+		    --space-2: 6px;                    
+		    --space-3: 8px;                    
+		    --space-4: 10px;                   
+		
+		    /* HEIGHTS */
+		    --header-height: 60px;             
+		    --subheader-height: 70px;          
+		
+		    /* SCROLLBAR */
+		    --scrollbar-width: 6px;            
+		    --scrollbar-thumb: rgba(0,0,0,0.1); 
+		}
+		
+		body {
+		    font-family: var(--font-family-main);
+		    font-size: var(--font-size-sm);
+		    background-color: var(--color-bg);
+		    margin: 0;
+		}
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .navbar-custom .btn, .navbar-custom input {
+      font-size: 12px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
+		
+		header {
+		    position: fixed;          
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: var(--header-height);
+		    background-color: var(--left-col-bg);
+		    box-shadow: var(--shadow-card);
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    z-index: 1000;            
+		}
+		.container {
+            padding: 60px 16px 50px; /* leave space for navbar + footer */
+            max-width: 1200px;
+            margin: 0 auto;                 
+		    min-height: 100vh;                 
+		}
+		button {
+		    padding: var(--space-2) var(--space-3);
+		    font-size: var(--font-size-sm);
+		    border-radius: var(--radius-sm);
+		    cursor: pointer;
+		    border: 1px solid transparent;
+		}
+		
+		button:hover {
+		    background-color: var(--color-light-surface);
+		}
+		
+		.navbar-custom {
+		    background-color: var(--left-col-bg);
+		    color: var(--text-white);
+		    padding: var(--space-2) var(--space-3);
+		    box-shadow: var(--shadow-card);
+		}
+		
+		.table-container {
+		    width: 100%;
+		    overflow-x: auto;
+		    background: var(--color-surface);
+		    border-radius: var(--radius-md);
+		    box-shadow: var(--shadow-card);
+		}
+		
+		.modern-table {
+		    width: 100%;
+		    border-collapse: collapse;
+		    font-size: var(--font-size-sm);
+		}
+		
+		.modern-table th, .modern-table td {
+		    padding: var(--space-3);
+		    text-align: left;
+		    border-bottom: 1px solid var(--color-border);
+		}
+		
+		.modern-table th {
+		    background-color: var(--color-light-surface);
+		    color: var(--text-muted);
+		}
+		
+		.modern-table tbody tr:hover {
+		    background-color: var(--color-light-surface);
+		}
+		
+		.badge {
+		    font-size: var(--font-size-xs);               /* Small font size for badges */
+		    padding: var(--space-1) var(--space-2);        /* Padding for the badge */
+		    border-radius: var(--radius-sm);              /* Rounded corners for badges */
+		    cursor: pointer;                             /* Pointer cursor on hover */
+		    transition: transform 0.1s ease-in-out,       /* Smooth scaling effect */
+		                background-color 0.3s ease;      /* Smooth background color transition */
+		    box-shadow: var(--shadow-badge);              /* Subtle shadow effect */
+		    display: inline-flex;                         /* Flexbox for alignment */
+		    justify-content: center;                      /* Center the content horizontally */
+		    align-items: center;                          /* Center the content vertically */
+		    text-align: center;                           /* Ensure text is centered */
+		}
+		
+		.badge:hover {
+		    transform: scale(1.1);                       /* Slight scale-up effect on hover */
+		    background-color: var(--color-light-surface); /* Lighten background color on hover */
+		}
+		
+		/* Badge styles for Ticket Status */
+		.badge.status-open {
+		    background-color: #2196f3; /* Blue (Open) */
+		    color: var(--text-white);
+		}
+		
+		.badge.status-in-progress {
+		    background-color: #ff9800; /* Orange (In Progress) */
+		    color: var(--text-white);
+		}
+		
+		.badge.status-re-open {
+		    background-color: #00bcd4; /* Cyan (Re-Open) */
+		    color: var(--text-white);
+		}
+		
+		.badge.status-resolved {
+		    background-color: #4caf50; /* Green (Resolved) */
+		    color: var(--text-white);
+		}
+		
+		.badge.status-closed {
+		    background-color: #f44336; /* Red (Closed) */
+		    color: var(--text-white);
+		}
+		
+		.badge.status-to-be-discussed {
+		    background-color: #9c27b0; /* Purple (To Be Discussed) */
+		    color: var(--text-white);
+		}
+		
+		/* Badge styles for Ticket Priority */
+		.badge.priority-critical {
+		    background-color: #e91e63; /* Pink (Critical) */
+		    color: var(--text-white);
+		}
+		
+		.badge.priority-high {
+		    background-color: #f44336; /* Red (High) */
+		    color: var(--text-white);
+		}
+		
+		.badge.priority-medium {
+		    background-color: #ffeb3b; /* Yellow (Medium) */
+		    color: var(--text-white);
+		}
+		
+		.badge.priority-low {
+		    background-color: #8bc34a; /* Green (Low) */
+		    color: var(--text-white);
+		}
+		
+		/* Badge styles for Ticket Type */
+		.badge.type-issue {
+		    background-color: #2196f3; /* Blue (Issue) */
+		    color: var(--text-white);
+		}
+		
+		.badge.type-task {
+		    background-color: #9c27b0; /* Purple (Task) */
+		    color: var(--text-white);
+		}
+		
+		.badge.type-requirement {
+		    background-color: #ff9800; /* Orange (Requirement) */
+		    color: var(--text-white);
+		}
+		
+		.badge.type-modification {
+		    background-color: #03a9f4; /* Light Blue (Modification) */
+		    color: var(--text-white);
+		}
+		
+		.badge.type-doubt {
+		    background-color: #8bc34a; /* Green (Doubt) */
+		    color: var(--text-white);
+		}
+
+		
+		.scrollable {
+		    max-height: 300px;
+		    overflow-y: auto;
+		    scrollbar-width: var(--scrollbar-width);
+		}
+		
+		.scrollable::-webkit-scrollbar {
+		    width: var(--scrollbar-width);
+		}
+		
+		.scrollable::-webkit-scrollbar-thumb {
+		    background-color: var(--scrollbar-thumb);
+		}
+		
+		/* Popup Modal */
+		.popup-modal {
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    background-color: rgba(0, 0, 0, 0.5);
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    visibility: hidden;
+		}
+		
+		.popup-modal.active {
+		    visibility: visible;
+		}
+		
+		.popup-content {
+		    background-color: var(--color-surface);
+		    padding: var(--space-3);
+		    border-radius: var(--radius-md);
+		    box-shadow: var(--shadow-card);
+		    width: 400px;
+		}
+		
+		.popup-actions {
+		    display: flex;
+		    justify-content: space-between;
+		    margin-top: var(--space-3);
+		}
+		
+		.popup-actions button {
+		    padding: var(--space-2);
+		    border-radius: var(--radius-sm);
+		    cursor: pointer;
+		    border: none;
+		}
+		
+		.popup-actions .btn-cancel {
+		    background-color: #6c757d;
+		    color: var(--text-white);
+		}
+		
+		.popup-actions .btn-update {
+		    background-color: var(--left-col-bg);
+		    color: var(--text-white);
+		}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" href="#">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      Tikkit
+    </a>
+
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
+
+    <div class="ms-auto d-flex gap-2 align-items-center">
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+      <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="d-flex flex-wrap">
+			    <button class="btn btn-outline-primary btn-sm me-2" onclick="setFilter('status', 'Open')">Open</button>
+			    <button class="btn btn-outline-primary btn-sm me-2" onclick="setFilter('status', 'Resolved')">Resolved</button>
+			    <button class="btn btn-outline-primary btn-sm me-2" onclick="setFilter('status', 'Closed')">Closed</button>
+			    <button class="btn btn-outline-primary btn-sm me-2" onclick="setFilter('status', 'Reopened')">Reopened</button>
+			    <button class="btn btn-outline-primary btn-sm me-2" onclick="setFilter('status', 'To Be Discussed')">To Be Discussed</button>
+			    <button class="btn btn-outline-primary btn-sm me-2" data-filter-key="status" data-filter-value="All" onclick="setFilter('status', 'All')">All</button>
+			</div>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control form-control-sm ms-3" id="searchTicket"
+                    placeholder="Search Tickets..." style="max-width: 200px;">
+                <button class="btn btn-outline-primary btn-sm ms-2" onclick="fetchTickets()">Search</button>
+            </div>
+        </div>
+        <h4 class="my-2">Tickets</h4>
+        <div class="table-container">
+		    <table class="modern-table">
+		        <thead>
+		            <tr>
+		                <th class="col-actions">Actions</th>
+		                <th class="col-number">Ticket #</th>
+		                <th class="col-badges">Status</th>
+		                <th class="col-dept">Department</th>
+		                <th class="col-title">Title</th>
+		                <th class="col-assigned">Assigned To</th>
+		                <th class="col-date">Assigned Dt</th>
+		                <th class="col-actions">Created By</th>
+		                <th class="col-date">Created Dt</th>
+		            </tr>
+		        </thead>
+		        <tbody id="ticket-table-body"></tbody>
+		    </table>
+		</div>
+
+
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination" id="paginationNav"></ul>
+            </nav>
+        </div>
+
+        <div class="ticket-card" id="ticketDetail" style="display:none;"></div>
+
+    </div>
+    
+    <div id="popupModal" class="popup-modal hidden">
+	    <div class="popup-content">
+	        <h4 id="popupTitle"></h4>
+	
+	        <select id="popupSelect"></select>
+	
+	        <div class="popup-actions">
+	            <button class="btn-cancel" onclick="closePopup()">Cancel</button>
+	            <button class="btn-update" onclick="updateValue()">Update</button>
+	        </div>
+	    </div>
+	</div>
+<footer>Tikkit © 2025</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+ // Dark Mode Toggle
+    const darkToggle = document.getElementById("darkToggle");
+    darkToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentFilters = {};
+
+        window.onload = fetchTickets;
+        
+        const STATUS_MAP = {
+        		"All": "",
+        	    "Open": "OPEN",
+        	    "Resolved": "RESOLVED",
+        	    "Closed": "CLOSED",
+        	    "Reopened": "RE_OPEN",
+        	    "To Be Discussed": "TO_BE_DISCUSSED"
+        	};
+
+        function setFilter(key, value) {
+
+            // If "ALL" selected → clear status filter
+            if (value === "All") {
+                delete currentFilters["ticketStatus"];
+                fetchTickets();
+                highlightActiveFilters();
+                return;
+            }
+
+            if (!value) {
+                delete currentFilters[key];
+            } else {
+                switch (key) {
+                    case 'status': key = 'ticketStatus'; break;
+                    case 'priority': key = 'priority'; break;
+                    case 'type': key = 'ticketType'; break;
+                }
+
+                // Apply mapped enum or fallback logic
+                if (STATUS_MAP[value] !== undefined) {
+                    if (STATUS_MAP[value] === null) {
+                        delete currentFilters[key];   // no filter
+                    } else {
+                        currentFilters[key] = STATUS_MAP[value];
+                    }
+                } else {
+                    currentFilters[key] = value.toUpperCase().replace(" ", "_");
+                }
+            }
+
+            fetchTickets();
+            highlightActiveFilters();
+        }
+
+
+
+        function highlightActiveFilters() {
+            const filterButtons = document.querySelectorAll('button[data-filter-key]');
+            filterButtons.forEach(btn => {
+                const key = btn.getAttribute('data-filter-key');
+                const value = btn.getAttribute('data-filter-value');
+                if (currentFilters[key] === value) {
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-primary');
+                } else {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                }
+            });
+        }
+
+
+        function fetchTickets(event, page = 1) {
+            if (event) event.preventDefault();
+
+            currentPage = page;
+            const searchTicket = document.getElementById('searchTicket').value.trim();
+            const params = new URLSearchParams();
+
+            if (searchTicket) params.append('ticketNumber', searchTicket);
+
+            Object.keys(currentFilters).forEach(k => {
+                let value = currentFilters[k];
+                
+                // Convert display name to API value
+                if (k === 'status' && STATUS_MAP[value]) {
+                    value = STATUS_MAP[value];
+                }
+
+                params.append(k, value);
+            });
+
+            axios.get(`/api/tickets/paged?page=${page - 1}&size=10&${params.toString()}`)
+                .then(response => {
+                    const tickets = response.data.tickets || [];
+                    totalPages = response.data.totalPages;
+                    renderTicketList(tickets);
+                    renderPagination();
+                })
+                .catch(error => {
+                    console.error('Error fetching tickets:', error);
+                });
+        }
+
+
+        function renderTicketList(tickets) {
+        	const tbody = document.getElementById('ticket-table-body');
+
+            tbody.innerHTML = "";
+
+            if (!tickets.length) {
+                tbody.innerHTML = "<tr><td colspan='10'>No tickets found</td></tr>";
+                return;
+            }
+
+            tickets.forEach(ticket => {
+                const row = document.createElement('tr');
+
+                const assignedDt = ticket.assignedDt ? new Date(ticket.assignedDt).toLocaleString() : '-';
+                const createdDt = ticket.createdDt ? new Date(ticket.createdDt).toLocaleString() : '-';
+
+                const typeShort = (ticket.ticketType || "I").charAt(0);
+                const priorityShort = (ticket.priority || "C").charAt(0);
+
+                row.innerHTML = `
+                    <td class="col-actions">
+                        <button class="btn btn-warning btn-sm me-1" onclick="editTicket(${ticket.ticketId})">✏</button>
+                        <button class="btn btn-info btn-sm"
+	                            onclick="window.location.href='/view/ticket?ticketId=${ticket.ticketId}'">
+	                        View
+	                    </button>
+                    </td>
+
+                    <td class="col-number">${ticket.ticketNumber}</td>
+
+                    <td class="col-badges badges">
+
+                    <!-- Badge for Ticket Type -->
+                    <button class="badge type-badge type-${ticket.ticketType.toLowerCase()}"
+                            data-tooltip="${ticket.ticketType}"
+                            onclick="openPopup('type', ${ticket.ticketId})">
+                        ${typeShort}
+                    </button>
+
+                    <!-- Badge for Ticket Status -->
+                    <button class="badge status-${ticket.ticketStatus.toLowerCase()}"
+                            data-tooltip="${ticket.ticketStatus}"
+                            onclick="openPopup('status', ${ticket.ticketId})">
+                        ${ticket.ticketStatus}
+                    </button>
+
+                    <!-- Badge for Ticket Priority -->
+                    <button class="badge priority-${ticket.ticketPriority.toLowerCase()}"
+                            data-tooltip="${ticket.ticketPriority}"
+                            onclick="openPopup('priority', ${ticket.ticketId})">
+                        ${priorityShort}
+                    </button>
+
+                </td>
+
+                    <td class="col-dept">${ticket.fromDepartmentName || '-'}</td>
+                    <td class="col-title">${ticket.ticketTitle || '-'}</td>
+                    <td class="col-assigned">${ticket.assignedToName || '-'}</td>
+                    <td class="col-date">${assignedDt}</td>
+                    <td class="col-actions">${ticket.createdByName || '-'}</td>
+                    <td class="col-date">${createdDt}</td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+        }
+
+        function renderPagination() {
+            const nav = document.getElementById("paginationNav");
+            nav.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                nav.innerHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="fetchTickets(event, ${i})">${i}</a>
+                    </li>
+                `;
+            }
+        }
+
+        function showTicketDetail(ticketId) {
+            axios.get(`/api/tickets/${ticketId}`)
+                .then(response => {
+                    const t = response.data;
+                    const detail = document.getElementById("ticketDetail");
+
+                    detail.innerHTML = `
+                        <h4>${t.ticketTitle}</h4>
+                        <p><strong>Status:</strong> ${t.ticketStatus}</p>
+                        <p><strong>Client:</strong> ${t.fromDepartmentName}</p>
+                        <p><strong>Description:</strong> ${t.description || 'N/A'}</p>
+                    `;
+
+                    detail.style.display = "block";
+                })
+                .catch(error => console.error('Error fetching details:', error));
+        }
+
+        function editTicket(ticketId) {
+            window.location.href = `/view/ticket/edit/${ticketId}`;
+        }
+    </script>
+    <script>
+		let selectedField = null;
+		let selectedTicketId = null;
+		
+		const OPTIONS = {
+		    type: ["ISSUE", "TASK", "SERVICE"],
+		    status: ["NEW", "OPEN", "RESOLVED", "CLOSED", "RE_OPEN"],
+		    priority: ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+		};
+		
+		function openPopup(field, ticketId) {
+		    selectedField = field;
+		    selectedTicketId = ticketId;
+		
+		    document.getElementById('popupTitle').innerText =
+		        `Change ${field.charAt(0).toUpperCase() + field.slice(1)}`;
+		
+		    let select = document.getElementById('popupSelect');
+		    select.innerHTML = "";
+		
+		    OPTIONS[field].forEach(option => {
+		        let opt = document.createElement("option");
+		        opt.value = option;
+		        opt.textContent = option;
+		        select.appendChild(opt);
+		    });
+		
+		    document.getElementById('popupModal').classList.remove("hidden");
+		}
+		
+		function closePopup() {
+		    document.getElementById('popupModal').classList.add("hidden");
+		}
+		
+		function updateValue() {
+		    const newValue = document.getElementById('popupSelect').value;
+		
+		    const url = `/api/tickets/${selectedTicketId}/update-${selectedField}`;
+		
+		    fetch(url, {
+		        method: "POST",
+		        headers: { "Content-Type": "application/json" },
+		        body: JSON.stringify({ value: newValue })
+		    })
+		    .then(res => res.json())
+		    .then(data => {
+		        alert(`${selectedField.toUpperCase()} updated successfully!`);
+		        location.reload();
+		    });
+		
+		    closePopup();
+		}
+		function logout() {
+		    window.location.href = "/logout";
+		}
+
+		</script>
+</body>
+</html>

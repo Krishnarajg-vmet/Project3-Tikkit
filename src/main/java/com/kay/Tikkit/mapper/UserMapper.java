@@ -41,7 +41,7 @@ public class UserMapper {
 		
 	}
 	
-	public static User toEntity(UserDto dto, Employee employee, Role role, Department department) {
+	public static User toEntity(UserDto dto, Employee employee, Role role, Department department, String encodedPassword) {
 		if(dto == null) return null;
 		
 		User user = new User();
@@ -50,6 +50,8 @@ public class UserMapper {
 		}
 		
 		user.setUserName(dto.getUserName());
+		user.setPassword(encodedPassword);
+		user.setPasswordResetRequired(true);
 		user.setRole(role);
 		user.setEmployee(employee);
 		user.setDepartment(department);
@@ -71,4 +73,14 @@ public class UserMapper {
 		
 		return user;
 	}
+	
+	public static User updatePassword(User user, String encodedPassword) {
+        if (user == null) return null;
+
+        user.setPassword(encodedPassword);
+        user.setPasswordResetRequired(false);
+        user.setModifiedDt(LocalDateTime.now());
+
+        return user;
+    }
 }

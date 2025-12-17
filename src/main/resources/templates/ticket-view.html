@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket View - Tikkit</title>
+
+<!-- CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<style>
+/* ===========================
+   ROOT DESIGN SYSTEM
+   =========================== */
+:root {
+    /* ===== COLORS ===== */
+    --color-bg: #f3f6ff;
+    --color-surface: #ffffff;
+    --color-light-surface: #f8f9ff;
+    --color-border: #dbe1ff;
+
+    /* BADGE COLORS */
+    --status-color: #6a5acd;  /* slate purple */
+    --priority-color: #ff6f61; /* coral red */
+    --users-color: #008cff;    /* vivid azure */
+
+    /* LEFT COLUMN */
+    --left-col-bg: #5c7cfa; /* smooth indigo */
+    --left-col-shadow: rgba(92, 124, 250, 0.45);
+
+    /* TEXT */
+    --text-main: #333;
+    --text-light: #555;
+    --text-muted: #777;
+    --text-white: #fff;
+
+    /* FONTS */
+    --font-family-main: "Segoe UI", Calibri, sans-serif;
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+
+    /* RADIUS */
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    /* SHADOWS */
+    --shadow-card: 0 1px 5px rgba(0,0,0,0.1);
+    --shadow-badge: 0 0 6px;
+    --shadow-inset: inset 0 0 5px rgba(0,0,0,0.05);
+
+    /* SPACING */
+    --space-1: 4px;
+    --space-2: 6px;
+    --space-3: 8px;
+    --space-4: 10px;
+
+    /* HEIGHTS */
+    --header-height: 60px;
+    --subheader-height: 70px;
+
+    /* SCROLLBAR */
+    --scrollbar-width: 6px;
+    --scrollbar-thumb: rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: var(--font-family-main);
+    background: var(--color-bg);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.navbar-custom {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) 20px;
+    position: relative;
+    z-index: 1001;
+}
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1050;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-custom .navbar-brand img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .navbar-custom .btn, .navbar-custom input {
+      font-size: 12px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 8px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+      font-size: 12px;
+      user-select: none;
+      z-index: 1050;
+    }
+
+    body.dark-mode footer {
+      background: #222;
+      color: #aaa;
+    }
+.container {
+      padding: 60px 16px 50px; /* leave space for navbar + footer */
+      max-width: 1200px;
+      margin: 0 auto;
+}
+.ticket-header {
+    position: fixed !important;
+    top: var(--header-height);
+    left: 20px;
+    right: 20px;
+    background: #f9f9f9;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-3) 14px;
+    font-family: var(--font-family-main);
+    color: var(--text-main);
+    z-index: 1002;
+    max-height: var(--subheader-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    overflow: hidden;
+}
+
+.ticket-header h5,
+.ticket-header h6 {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ticket-header .status-badge,
+.ticket-header .priority-badge,
+.ticket-header .users-badge {
+    font-size: var(--font-size-xs) !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+    border-radius: var(--radius-lg) !important;
+    text-transform: uppercase !important;
+    color: var(--text-white) !important;
+}
+
+.backbtn {
+margin-right: 8px;
+}
+
+.status-badge {
+    background-color: var(--status-color) !important;
+    box-shadow: var(--shadow-badge) var(--status-color) !important;
+}
+
+.priority-badge {
+    background-color: var(--priority-color) !important;
+    box-shadow: var(--shadow-badge) var(--priority-color) !important;
+}
+
+.users-badge {
+    background-color: var(--users-color) !important;
+    box-shadow: var(--shadow-badge) var(--users-color) !important;
+}
+
+.ticket-header .small-label {
+    font-size: var(--font-size-xs) !important;
+    color: #666 !important;
+    margin-top: 2px !important;
+    font-weight: 600 !important;
+}
+
+.content-wrapper {
+    position: fixed !important;
+    top: calc(var(--header-height) + var(--subheader-height)) !important;
+    bottom: 40px !important;
+    left: 20px !important;
+    right: 20px !important;
+    overflow-y: auto !important;
+    padding-right: 12px !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+
+.descom {
+    background: var(--color-surface) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-card) !important;
+    padding: var(--space-3) var(--space-4) !important;
+    display: flex !important;
+    gap: var(--space-2) !important;
+    color: var(--text-main) !important;
+    max-height: 130px !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+}
+
+.left-col {
+    width: 120px !important;
+    font-weight: 600 !important;
+    background-color: var(--left-col-bg) !important;
+    color: var(--text-white) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 12px 8px !important;
+    text-align: center !important;
+    box-shadow: 0 0 7px var(--left-col-shadow) !important;
+    font-size: var(--font-size-sm);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+}
+
+.desc-box {
+    background: var(--color-light-surface) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-2) !important;
+    overflow-y: auto !important;
+    box-shadow: var(--shadow-inset) !important;
+    font-size: var(--font-size-sm) !important;
+    line-height: 1.3 !important;
+    color: var(--text-main) !important;
+    max-height: 130px !important;
+    flex-grow: 1 !important;
+}
+
+.meta-row {
+    margin-top: 4px !important;
+    font-size: var(--font-size-xs) !important;
+    color: var(--text-light) !important;
+    font-weight: 700 !important;
+}
+
+.meta-row strong {
+    color: var(--text-main) !important;
+}
+
+#commentsContainer {
+    background: var(--color-surface) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-card) !important;
+    padding: var(--space-2) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    overflow-y: auto !important;
+    flex-grow: 1 !important;
+}
+
+.comment-card {
+    background: var(--color-light-surface) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-2) var(--space-3) !important;
+    box-shadow: var(--shadow-inset) !important;
+    font-size: var(--font-size-sm) !important;
+    color: var(--text-main) !important;
+    line-height: 1.3 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 4px !important;
+}
+
+.comment-card .text-end {
+    font-size: var(--font-size-xs) !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 2px;
+}
+
+.comment-card div:not(.text-end) {
+    font-size: var(--font-size-sm) !important;
+    margin-top: 2px !important;
+}
+
+.add-update-panel {
+    background: var(--color-surface) !important;
+    padding: var(--space-4) !important;
+    border-radius: var(--radius-md) !important;
+    margin-top: var(--space-4) !important;
+    display: none;
+    box-shadow: var(--shadow-card);
+    font-size: var(--font-size-sm) !important;
+}
+
+.add-update-panel label {
+    font-size: var(--font-size-sm) !important;
+    margin-bottom: 2px;
+}
+
+.add-update-panel select,
+.add-update-panel .form-control {
+    font-size: var(--font-size-sm) !important;
+    padding: var(--space-2) !important;
+}
+
+.add-update-panel button {
+    font-size: var(--font-size-sm) !important;
+    padding: var(--space-2) var(--space-3) !important;
+}
+
+h6.fw-bold {
+    margin-top: 16px !important;
+    margin-bottom: 4px !important;
+}
+
+.content-wrapper::-webkit-scrollbar,
+.desc-box::-webkit-scrollbar,
+#commentsContainer::-webkit-scrollbar,
+.add-update-panel::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+.content-wrapper::-webkit-scrollbar-thumb,
+.desc-box::-webkit-scrollbar-thumb,
+#commentsContainer::-webkit-scrollbar-thumb,
+.add-update-panel::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+
+#quillEditor {
+    height: 80px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: var(--font-size-sm) !important;
+}
+
+.ql-toolbar.ql-snow {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+    padding: var(--space-1) !important;
+    font-size: var(--font-size-sm) !important;
+}
+
+.ql-container.ql-snow {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important;
+    font-size: var(--font-size-sm) !important;
+    line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+
+    .ticket-header {
+        flex-wrap: wrap;
+        max-height: none;
+        gap: var(--space-2);
+    }
+
+    .left-col {
+        width: 100% !important;
+        padding: var(--space-3) !important;
+        font-size: var(--font-size-sm) !important;
+    }
+
+    .descom {
+        flex-direction: column !important;
+        max-height: none !important;
+    }
+
+    .desc-box {
+        max-height: 150px !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-custom" role="navigation" aria-label="Primary navigation">
+    <a class="navbar-brand" href="#">
+      <img src="https://via.placeholder.com/40x30?text=Logo" alt="Logo" />
+      Tikkit
+    </a>
+
+    <div class="form-check form-switch text-white ms-3">
+      <input class="form-check-input" type="checkbox" id="darkToggle" aria-label="Toggle dark mode" />
+      <label class="form-check-label" for="darkToggle">Dark Mode</label>
+    </div>
+
+    <div class="ms-auto d-flex gap-2 align-items-center">
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
+      <button class="btn btn-primary btn-sm" onclick="window.location.href='/view/ticket/create'">Create Ticket</button>
+      <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
+      <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
+      <i class="bi bi-person-circle text-white" role="button" aria-label="User Profile"></i>
+      <button class="btn btn-dark btn-sm" id="btnLogout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+<div class="container">
+    <div class="content-wrapper"><!-- TICKET HEADER -->
+    <div class="ticket-header mb-3">
+	
+    <div class="d-flex justify-content-between">
+    <div class="mb-3 backbtn">
+	    <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='/view/ticket/dashboard'">
+	        ←
+	    </button>
+	</div>
+        <div>
+            <h5 id="ticketNumber" class="mb-1">Loading...</h5>
+            <span id="ticketStatusBadge" class="badge bg-primary status-badge">Status</span>
+        </div>
+        <div class="text-start">
+            <h6 id="ticketTitle" class="mb-1">-</h6>
+            <div id="ticketClient" class="text-muted small">-</div>
+        </div>
+    </div>
+
+    <div class="row small-label mt-2">
+        <div class="col-md-3"><strong>Created By:</strong> <span id="ticketCreatedBy">-</span></div>
+        <div class="col-md-3"><strong>Priority:</strong> <span id="ticketPriority">-</span></div>
+        <div class="col-md-3"><strong>Product:</strong> <span id="ticketProduct">-</span></div>
+        <div class="col-md-3"><strong>Type:</strong> <span id="ticketType">-</span></div>
+    </div>
+</div>
+
+<h6 class="fw-bold mb-2">Description</h6>
+<div class="d-flex descom">
+    <div class="left-col">
+        <strong>Created by</strong><br>
+        <span id="ticketCreatedByInDescription">-</span>
+    </div>
+    <div class="flex-grow-1">
+        <div id="ticketDescription" class="desc-box">Loading description...</div>
+        <div class="row meta-row mt-2">
+            <div class="col-md-3"><strong>Status:</strong> <span id="descStatus">-</span></div>
+            <div class="col-md-3"><strong>Priority:</strong> <span id="descPriority">-</span></div>
+            <div class="col-md-3"><strong>Type:</strong> <span id="descType">-</span></div>
+            <div class="col-md-3"><strong>Product:</strong> <span id="descProduct">-</span></div>
+        </div>
+    </div>
+</div>
+
+<h6 class="fw-bold mt-4 mb-2">Comments</h6>
+<div id="commentsContainer"></div>
+
+<div id="actionButtons" class="d-flex gap-2 mt-3"></div>
+
+<!-- ADD UPDATE PANEL -->
+<div id="addUpdatePanel" class="add-update-panel">
+    <div class="d-flex gap-2 mb-2">
+        <label for="updateStatus" class="form-label">Status</label>
+        <select id="updateStatus" class="form-select form-select-sm"></select>
+
+        <label for="updatePriority" class="form-label">Priority</label>
+        <select id="updatePriority" class="form-select form-select-sm"></select>
+    </div>
+
+    <div id="quillEditor"></div>
+
+    <div class="mt-2">
+        <button class="btn btn-primary btn-sm me-1" onclick="sendUpdate(false)">Update Ticket</button>
+        <button class="btn btn-secondary btn-sm me-1" onclick="sendUpdate(true)">Add Comment Only</button>
+        <button class="btn btn-outline-danger btn-sm" onclick="cancelUpdate()">Cancel</button>
+    </div>
+</div>
+
+
+</div>
+
+<!-- ASSIGN MODAL -->
+<div class="modal fade" id="assignModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Assign Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="assignUserSelect" class="form-label">Assign To</label>
+        <select id="assignUserSelect" class="form-select"></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" onclick="assignTicket()">Assign</button>
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<footer>
+Tikkit © 2025
+</footer>
+
+<!-- JS Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const ticketId = new URLSearchParams(window.location.search).get("ticketId");
+const API_BASE = "/api/";
+let quill;
+let ticketData = null;
+let currentUser = null;
+let currentUserId = null;
+let assignModalInstance = null;
+
+const updatePriorityEl = document.getElementById("updatePriority");
+const updateStatusEl = document.getElementById("updateStatus");
+const actionButtonsDiv = document.getElementById("actionButtons");
+// -------------------- Load Current User --------------------
+async function loadCurrentUser() {
+    try {
+        const res = await axios.get(`${API_BASE}users/current`);
+        currentUser = res.data;
+        currentUserId = currentUser.userId;
+    } catch (err) {
+        console.error(err);
+        alert("Unable to load current user.");
+    }
+}
+// -------------------- Load Ticket --------------------
+async function loadTicket() {
+    try {
+        const res = await axios.get(`${API_BASE}tickets/${ticketId}`);
+        ticketData = res.data;
+
+        document.getElementById("ticketNumber").innerText = ticketData.ticketNumber;
+        document.getElementById("ticketTitle").innerText = ticketData.ticketTitle;
+        document.getElementById("ticketClient").innerText = ticketData.fromDepartmentName;
+        document.getElementById("ticketCreatedBy").innerText = ticketData.createdByName;
+        document.getElementById("ticketPriority").innerText = ticketData.ticketPriority;
+        document.getElementById("ticketType").innerText = ticketData.ticketType;
+        document.getElementById("ticketProduct").innerText = ticketData.product || "-";
+        document.getElementById("ticketCreatedByInDescription").innerText = ticketData.createdByName;
+        document.getElementById("ticketStatusBadge").innerText = ticketData.ticketStatus;
+        document.getElementById("descStatus").innerText = ticketData.ticketStatus;
+        document.getElementById("descPriority").innerText = ticketData.ticketPriority;
+        document.getElementById("descType").innerText = ticketData.ticketType;
+        document.getElementById("descProduct").innerText = ticketData.product || "-";
+        document.getElementById("ticketDescription").innerHTML = ticketData.description || "<i>No description provided.</i>";
+
+        await populateStatusOptions(ticketData.ticketStatus);
+        await populatePriorityOptions(ticketData.ticketPriority);
+        renderActionButtons();
+    } catch (err) {
+        console.error(err);
+        alert("Unable to load ticket.");
+    }
+}
+// -------------------- Dropdowns --------------------
+async function populateStatusOptions(currentStatus) {
+    try {
+        const res = await axios.get(`${API_BASE}enums/ticketStatus`);
+        updateStatusEl.innerHTML = "";
+        res.data.forEach(o => {
+            const option = document.createElement("option");
+            option.value = o.name;
+            option.textContent = o.label;
+            if (o.name === currentStatus) option.selected = true;
+            updateStatusEl.appendChild(option);
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+async function populatePriorityOptions(currentPriority) {
+    try {
+        const res = await axios.get(`${API_BASE}enums/ticketPriority`);
+        updatePriorityEl.innerHTML = "";
+        res.data.forEach(o => {
+            const option = document.createElement("option");
+            option.value = o.name;
+            option.textContent = o.label;
+            if (o.name === currentPriority) option.selected = true;
+            updatePriorityEl.appendChild(option);
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+// -------------------- Action Buttons --------------------
+function renderActionButtons() {
+    actionButtonsDiv.innerHTML = "";
+    const isOpenState = ticketData.ticketStatus === "OPEN" || ticketData.ticketStatus === "RE_OPEN";
+    // Add Comment button
+    const addCommentBtn = document.createElement("button");
+    addCommentBtn.className = "btn btn-outline-secondary btn-sm me-1";
+    addCommentBtn.innerText = "Add Comment";
+    addCommentBtn.onclick = showAddUpdatePanel;
+    actionButtonsDiv.appendChild(addCommentBtn);
+
+    if (ticketData.ticketStatus === "NEW") {
+        const assignBtn = document.createElement("button");
+        assignBtn.className = "btn btn-primary btn-sm";
+        assignBtn.innerText = "Assign Ticket";
+        assignBtn.onclick = showAssignModal;
+        actionButtonsDiv.appendChild(assignBtn);
+    } else if (isOpenState && ticketData.assignedToId === currentUserId) {
+        const inProgressBtn = document.createElement("button");
+        inProgressBtn.className = "btn btn-warning btn-sm";
+        inProgressBtn.innerText = "Move to In Progress";
+        inProgressBtn.onclick = moveToInProgress;
+        actionButtonsDiv.appendChild(inProgressBtn);
+
+        const reassignBtn = document.createElement("button");
+        reassignBtn.className = "btn btn-secondary btn-sm";
+        reassignBtn.innerText = "Reassign Ticket";
+        reassignBtn.onclick = showAssignModal;
+        actionButtonsDiv.appendChild(reassignBtn);
+    } else if (ticketData.ticketStatus === "IN_PROGRESS" && ticketData.assignedToId === currentUserId) {
+        const resolveBtn = document.createElement("button");
+        resolveBtn.className = "btn btn-success btn-sm";
+        resolveBtn.innerText = "Resolve Ticket";
+        resolveBtn.onclick = resolveTicket;
+        actionButtonsDiv.appendChild(resolveBtn);
+    } else if (ticketData.ticketStatus === "RESOLVED") {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "btn btn-success btn-sm";
+        closeBtn.innerText = "Close Ticket";
+        closeBtn.onclick = closeTicket;
+        actionButtonsDiv.appendChild(closeBtn);
+
+        if (ticketData.assignedToId === currentUserId) {
+            const reopenBtn = document.createElement("button");
+            reopenBtn.className = "btn btn-warning btn-sm";
+            reopenBtn.innerText = "Reopen Ticket";
+            reopenBtn.onclick = reopenTicket;
+            actionButtonsDiv.appendChild(reopenBtn);
+        }
+    }
+}
+// -------------------- Assignment --------------------
+function showAssignModal() {
+    const assignSelect = document.getElementById("assignUserSelect");
+    assignSelect.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Select User --";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    assignSelect.appendChild(placeholder);
+    axios.get(`${API_BASE}users/department/${ticketData.toDepartmentId}`, { withCredentials: true })
+        .then(res => {
+            if (!res.data || res.data.length === 0) {
+                const option = document.createElement("option");
+                option.textContent = "No users available";
+                option.disabled = true;
+                assignSelect.appendChild(option);
+            } else {
+                res.data.forEach(u => {
+                    const option = document.createElement("option");
+                    option.value = u.userId;
+                    option.textContent = u.userName;
+                    assignSelect.appendChild(option);
+                });
+            }
+            const modalEl = document.getElementById("assignModal");
+            // 🔥 CREATE ONCE
+            if (!assignModalInstance) {
+                assignModalInstance = new bootstrap.Modal(modalEl, {
+                    backdrop: true,
+                    keyboard: true
+                });
+            }
+            assignModalInstance.show();
+        })
+        .catch(err => {
+            console.error("Failed to load users:", err);
+        });
+}
+async function assignTicket() {
+    const userId = parseInt(document.getElementById("assignUserSelect").value, 10);
+    if (!userId) {
+        alert("Select a user.");
+        return;
+    }
+    try {
+        await axios.post(`${API_BASE}tickets/${ticketId}/assign`, {
+            assignedToId: userId
+        });
+        // ✅ CLOSE MODAL (REAL INSTANCE)
+        if (assignModalInstance) {
+            assignModalInstance.hide();
+        }
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err.response?.data || err);
+        alert("Assignment failed");
+    }
+}
+// -------------------- Updates --------------------
+function showAddUpdatePanel() {
+    document.getElementById("addUpdatePanel").style.display = "block";
+}
+function cancelUpdate() {
+    quill.setContents([]);
+    document.getElementById("addUpdatePanel").style.display = "none";
+}
+async function sendUpdate(commentOnly = false) {
+    if (!currentUserId) {
+        alert("User not loaded. Please refresh.");
+        return;
+    }
+    const plainText = quill.getText().trim();
+    const commentHtml = quill.root.innerHTML.trim();
+    // ---------------- Add Comment ----------------
+    if (plainText) {
+        try {
+            await axios.post(
+                `${API_BASE}tickets/${ticketId}/comments`,
+                commentHtml,
+                {
+                    params: { createdById: currentUserId },
+                    headers: { "Content-Type": "text/plain" }
+                }
+            );
+        } catch (err) {
+            console.error("Failed to add comment:", err.response?.data || err.message);
+            alert("Failed to add comment");
+            return;
+        }
+    } else if (commentOnly) {
+        alert("Enter a comment");
+        return;
+    }
+    // ---------------- Update Ticket ----------------
+    if (!commentOnly) {
+        try {
+            await axios.put(`${API_BASE}tickets/${ticketId}`, {
+                modifiedById: currentUserId,
+                ticketStatus: updateStatusEl.value,
+                ticketPriority: updatePriorityEl.value
+            });
+        } catch (err) {
+            console.error("Failed to update ticket:", err.response?.data || err.message);
+            alert("Failed to update ticket");
+            return;
+        }
+    }
+    cancelUpdate();
+    // 🔴 Force full refresh (this fixes Close/Cancel)
+    await loadTicket();
+    await loadComments();
+}
+// -------------------- Ticket Actions --------------------
+async function changeStatus(newStatus) {
+    try {
+        await axios.put(`${API_BASE}tickets/${ticketId}`, { modifiedById: currentUserId, ticketStatus: newStatus });
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err);
+        alert("Status update failed");
+    }
+}
+async function moveToInProgress() {
+    try {
+        await axios.post(`${API_BASE}tickets/${ticketId}/inprogress`, { ticketId, modifiedById: currentUserId });
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err.response?.data || err);
+        alert("Failed to move to In Progress");
+    }
+}
+async function resolveTicket() {
+    try {
+        await axios.post(`${API_BASE}tickets/${ticketId}/resolve`, { ticketId, resolvedById: currentUserId });
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err.response?.data || err);
+        alert("Failed to resolve ticket");
+    }
+}
+async function closeTicket() {
+    try {
+        await axios.post(`${API_BASE}tickets/${ticketId}/close`, { ticketId, closedById: currentUserId });
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err.response?.data || err);
+        alert("Failed to close ticket");
+    }
+}
+async function reopenTicket() {
+    try {
+        await axios.post(`${API_BASE}tickets/${ticketId}/reopen`, { ticketId, reopenedById: currentUserId });
+        await loadTicket();
+        await loadComments();
+    } catch (err) {
+        console.error(err.response?.data || err);
+        alert("Failed to reopen ticket");
+    }
+}
+// -------------------- Load Comments --------------------
+async function loadComments() {
+    try {
+        const res = await axios.get(`${API_BASE}tickets/history/${ticketId}`);
+        const container = document.getElementById("commentsContainer");
+        const history = res.data;
+
+        container.innerHTML = history.map(h => {
+            const content = h.commentText || h.changeSummary || "<i>No details</i>";
+            const actionHeader = h.actionType ? `${h.actionType} by ${h.changedByUserName || 'Unknown'}` : `Updated by ${h.changedByUserName || 'Unknown'}`;
+            const changedAt = h.changedDt ? new Date(h.changedDt).toLocaleString() : '';
+
+            return `
+                <div class="d-flex mb-3">
+                    <div class="left-col"><strong>Created by</strong><br>${h.changedByUserName || '-'}</div>
+                    <div class="flex-grow-1">
+                        <div class="comment-card">
+                            <div class="text-end small text-muted">${changedAt}</div>
+                            <div>${content}<br><strong>${actionHeader}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    } catch (err) {
+        console.error("Failed to load ticket history:", err);
+    }
+}
+// -------------------- Logout --------------------
+function logout() {
+    window.location.href = "/logout";
+}
+// -------------------- Init --------------------
+document.addEventListener("DOMContentLoaded", async function() {
+    quill = new Quill("#quillEditor", {
+        theme: "snow",
+        placeholder: "Write update...",
+        modules: {
+            toolbar: [
+                ["bold","italic","underline"],
+                [{list:"ordered"},{list:"bullet"}],
+                [{align:[]}],
+                [{color:[]}],
+                ["clean"]
+            ]
+        }
+    });
+    quill.root.style.height = '80px';
+    quill.root.style.overflowY = 'auto';
+
+    await loadCurrentUser();
+    await loadTicket();
+    await loadComments();
+});
+// -------------------- Dark Mode --------------------
+const darkToggle = document.getElementById("darkToggle");
+darkToggle.addEventListener("change", () => {
+    document.body.classList.toggle("dark-mode");
+});
+</script>
+</body>
+</html>

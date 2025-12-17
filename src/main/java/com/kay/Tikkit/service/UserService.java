@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kay.Tikkit.dto.UserDto;
@@ -36,6 +37,11 @@ public class UserService {
 	@Autowired
 	private DepartmentRepository departmentRepository;
 	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	
+	private final String DEFAULT_PASSWORD = "123"; 
+	
 	public UserDto createUser(UserDto dto) {
 		System.out.println("Received DTO: " + dto.getEmployeeId() + " "+ dto.getUserName());
 		if(dto.getEmployeeId() == null) {
@@ -52,7 +58,10 @@ public class UserService {
 		Role role = roleRepository.findById(dto.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Role not found"));
 		Department department = departmentRepository.findById(dto.getDepartmentId()).orElseThrow(() -> new EntityNotFoundException("Department not found"));
 		
-		User user = UserMapper.toEntity(dto, employee, role, department);
+		String encodedPassword = passwordEncoder.encode(DEFAULT_PASSWORD);
+		
+		User user = UserMapper.toEntity(dto, employee, role, department, encodedPassword);
+		user.setPasswordResetRequired(true);
 		user.setIsActive(true);
 		
 		return UserMapper.toDto(userRepository.save(user));
@@ -79,6 +88,11 @@ public class UserService {
 		return user.map(UserMapper::toDto).orElseThrow(() -> new EntityNotFoundException("User not found"));
 	}
 	
+
+	public User getUserByUsername(String username) {
+		return userRepository.findByUserName(username).orElseThrow(() -> new EntityNotFoundException("Use name not found"));
+	}
+	
 	public List<UserDto> getAllUsers() {
 		return userRepository.findAll()
 				.stream()
@@ -93,5 +107,34 @@ public class UserService {
 			userRepository.save(u);
 		});
 	}
+	
+	public List<UserDto> getUsersByDepartment(Long departmentId) {
+	    Department department = departmentRepository.findById(departmentId)
+	            .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+
+	    List<User> users = userRepository.findByDepartmentDepartmentId(departmentId);
+
+	    return users.stream()
+	                .map(UserMapper::toDto)
+	                .collect(Collectors.toList());
+	}
+	
+	public boolean isPasswordResetRequired(String username) {
+	    User user = userRepository.findByUserName(username)
+	            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+	    return Boolean.TRUE.equals(user.getPasswordResetRequired());
+	}
+
+    public UserDto resetPassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        user.setPasswordResetRequired(false);
+        user.setModifiedDt(LocalDateTime.now());
+        return UserMapper.toDto(userRepository.save(user));
+    }
+
 
 }
