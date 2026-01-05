@@ -40,7 +40,7 @@ public class AuthController {
     public boolean checkResetRequired(@PathVariable String username) {
         return userService.isPasswordResetRequired(username);
     }
-
+    
     @PostMapping("/reset-password")
     public UserDto resetPassword(@RequestParam Long userId,
                                  @RequestParam String newPassword) {

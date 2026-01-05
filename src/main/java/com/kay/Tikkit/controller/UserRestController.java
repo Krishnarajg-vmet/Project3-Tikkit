@@ -49,8 +49,6 @@ public class UserRestController {
 	public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 		 try {
 	            String jsonBody = objectMapper.writeValueAsString(dto);
-	            System.out.println("Raw request body: " + jsonBody);  // Log the raw JSON request
-	            System.out.println("Received UserDto: " + dto.getEmployeeId());
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }

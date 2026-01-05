@@ -40,7 +40,7 @@
     </div>
 
     <div class="ms-auto d-flex gap-2 align-items-center">
-     <span><strong>Logged in User:</strong> KRISHNARAJ G</span>
+     <span><strong>Logged in User:</strong><span id="employeeName"></span></span>
       <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/home'">Home</button>
       <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/view/ticket/dashboard'">Dashboard</button>
       <i class="bi bi-bell text-white" role="button" aria-label="Notifications"></i>
@@ -247,9 +247,15 @@ async function loadDepartments() {
 async function loadCurrentUser() {
     try {
         const user = await fetch("/api/users/current").then(r => r.json());
+        console.log('Current User Data:', user); // Add a log to inspect user data
         let employeename = user.firstName + " " + user.lastName;
-	      document.getElementById("employeeName").textContent = employeename;
-        document.getElementById('createdByName').value = user.userName;
+        document.getElementById("employeeName").textContent = employeename;
+
+        if (user.userName) {
+            document.getElementById('createdByName').value = user.userName;
+        } else {
+            document.getElementById('createdByName').value = 'Unknown User';
+        }
 
         const toDeptSelect = document.getElementById('toDepartmentId');
         if (toDeptSelect) {
@@ -266,6 +272,7 @@ async function loadCurrentUser() {
         document.getElementById('createdByName').value = 'Unknown User';
     }
 }
+
 
 function openComplaintPopup() {
     document.getElementById("complaintPopup").style.display = "block";

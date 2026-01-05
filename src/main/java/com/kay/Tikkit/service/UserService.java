@@ -43,7 +43,7 @@ public class UserService {
 	private final String DEFAULT_PASSWORD = "123"; 
 	
 	public UserDto createUser(UserDto dto) {
-		System.out.println("Received DTO: " + dto.getEmployeeId() + " "+ dto.getUserName());
+		
 		if(dto.getEmployeeId() == null) {
 			throw new IllegalArgumentException("Employee ID must not be null");
 		}
